@@ -1,6 +1,9 @@
+import 'package:condo_app/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutterfire_ui/auth.dart';
 
 import 'sample_feature/sample_item_details_view.dart';
 import 'sample_feature/sample_item_list_view.dart';
@@ -18,6 +21,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const providerConfigs = [
+      // TODO - Remove hardcoded client_id
+      // This client id shouldn't be exposed here. This is just the development
+      // instance/client id and must be removed before include the prodution
+      // environment.
+      // Remove alto these files:
+      // - android/app/google-services.json
+      // - ios/firebase_app_id_file.json
+      // - lib/firebase_options.dart
+      // - macos/firebase_app_id_file.json
+      // EmailProviderConfiguration(),
+      GoogleProviderConfiguration(clientId: oAuthClientId)
+    ];
+
     // Glue the SettingsController to the MaterialApp.
     //
     // The AnimatedBuilder Widget listens to the SettingsController for changes.
@@ -26,6 +43,10 @@ class MyApp extends StatelessWidget {
       animation: settingsController,
       builder: (BuildContext context, Widget? child) {
         return MaterialApp(
+          initialRoute: FirebaseAuth.instance.currentUser == null
+              ? '/sign-in'
+              : '/profile',
+
           // Providing a restorationScopeId allows the Navigator built by the
           // MaterialApp to restore the navigation stack when a user leaves and
           // returns to the app after it has been killed while running in the
@@ -71,6 +92,24 @@ class MyApp extends StatelessWidget {
                     return SettingsView(controller: settingsController);
                   case SampleItemDetailsView.routeName:
                     return const SampleItemDetailsView();
+                  case '/sign-in':
+                    return SignInScreen(
+                      providerConfigs: providerConfigs,
+                      actions: [
+                        AuthStateChangeAction<SignedIn>((context, state) {
+                          Navigator.pushReplacementNamed(context, '/profile');
+                        }),
+                      ],
+                    );
+                  case '/profile':
+                    return ProfileScreen(
+                      providerConfigs: providerConfigs,
+                      actions: [
+                        SignedOutAction((context) {
+                          Navigator.pushReplacementNamed(context, '/sign-in');
+                        }),
+                      ],
+                    );
                   case SampleItemListView.routeName:
                   default:
                     return const SampleItemListView();

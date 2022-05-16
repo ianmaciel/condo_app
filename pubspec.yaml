@@ -14,6 +14,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  firebase_core: ^1.17.0
+  flutterfire_ui: ^0.4.0+5
 
 dev_dependencies:
   flutter_test:
