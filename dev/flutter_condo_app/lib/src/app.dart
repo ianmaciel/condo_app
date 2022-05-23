@@ -1,4 +1,5 @@
 import 'package:condo_app/firebase_options.dart';
+import 'package:condo_app/src/dashboard/dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           initialRoute: FirebaseAuth.instance.currentUser == null
               ? '/sign-in'
-              : '/profile',
+              : DashboardView.routeName,
 
           // Providing a restorationScopeId allows the Navigator built by the
           // MaterialApp to restore the navigation stack when a user leaves and
@@ -92,15 +93,6 @@ class MyApp extends StatelessWidget {
                     return SettingsView(controller: settingsController);
                   case SampleItemDetailsView.routeName:
                     return const SampleItemDetailsView();
-                  case '/sign-in':
-                    return SignInScreen(
-                      providerConfigs: providerConfigs,
-                      actions: [
-                        AuthStateChangeAction<SignedIn>((context, state) {
-                          Navigator.pushReplacementNamed(context, '/profile');
-                        }),
-                      ],
-                    );
                   case '/profile':
                     return ProfileScreen(
                       providerConfigs: providerConfigs,
@@ -111,8 +103,20 @@ class MyApp extends StatelessWidget {
                       ],
                     );
                   case SampleItemListView.routeName:
-                  default:
                     return const SampleItemListView();
+                  case DashboardView.routeName:
+                    return DashboardView();
+                  case '/sign-in':
+                  default:
+                    return SignInScreen(
+                      showAuthActionSwitch: false,
+                      providerConfigs: providerConfigs,
+                      actions: [
+                        AuthStateChangeAction<SignedIn>((context, state) {
+                          Navigator.pushReplacementNamed(context, '/profile');
+                        }),
+                      ],
+                    );
                 }
               },
             );
