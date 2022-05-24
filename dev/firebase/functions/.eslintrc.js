@@ -11,4 +11,8 @@ module.exports = {
   rules: {
     quotes: ["error", "double"],
   },
+  // Newly added property
+  parserOptions: {
+    "ecmaVersion": 2020,
+  },
 };
