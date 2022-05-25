@@ -10,7 +10,7 @@ const db = admin.firestore();
  * @param {object} request The first number.
  * @param {object} response The second number.
  */
-async function helloWorld(request, response) {
+async function getDevices(request, response) {
   const ewelink = await init();
 
   /* get all devices */
@@ -123,7 +123,7 @@ async function getRegion() {
 }
 
 module.exports = {
-  helloWorld,
+  getDevices,
   getRegion,
   toggleCarGate,
 };
