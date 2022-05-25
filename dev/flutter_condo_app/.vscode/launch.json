@@ -5,9 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "condo_app",
+            "name": "Run flutter app",
             "request": "launch",
             "type": "dart"
+        },
+        {
+            "name": "Watch build runner",
+            "request": "launch",
+            "command": "flutter pub run build_runner watch --delete-conflicting-outputs",
+            "type": "node-terminal"
+        },
+        {
+            "name": "Run build runner",
+            "request": "launch",
+            "command": "flutter pub run build_runner build --delete-conflicting-outputs",
+            "type": "node-terminal"
         },
         {
             "name": "condo_app (profile mode)",

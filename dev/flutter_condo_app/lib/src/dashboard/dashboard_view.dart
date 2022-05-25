@@ -1,65 +1,26 @@
+import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
+import 'package:condo_app/src/camera/camera_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:flutter_vlc_player/src/vlc_player_controller.dart';
+import 'package:flutterfire_ui/firestore.dart';
 
 import '../settings/settings_view.dart';
 
 /// Displays a list of SampleItems.
-class DashboardView extends StatelessWidget {
+class DashboardView extends StatefulWidget {
   DashboardView({
     Key? key,
   }) : super(key: key);
 
-  static const routeName = '/';
+  static const routeName = '/dashboard';
 
-  final VlcPlayerController _vlcViewControllerExterna11 =
-      VlcPlayerController.network(
-    //'http://192.168.1.178:88/cgi-bin/CGIStream.cgi?cmd=GetMJStream&usr=ianmaciel&pwd=ian290994',
-    //'http://admin:tomate1028@10.0.0.11/cgi-bin/mjpg/video.cgi?&subtype=1',
-    //'rtsp://10.0.0.11:554/user=admin&password=tomate1028&channel=1&stream=0.sdp?',
-    //'rtsp://10.0.0.130:554/user=admin&password=tomate1028&channel=1&stream=0.sdp?',
-    //
-    // OK - rua 1
-    //'rtsp://10.0.0.131:554/user=admin&password=tomate1028&channel=1&stream=0.sdp?',
-    //'rtsp://10.0.0.135:554/user=admin&password=tomate1028&channel=1&stream=0.sdp?',
-    //
-    // NVD 3610 - https://forum.intelbras.com.br/viewtopic.php?t=61631
-    // rtsp://<user>:<password>@<ip>:<port>/cam/realmonitor?channel=<channelNo>&subtype=<typeNo>
-    //'rtsp://admin:134940@10.0.0.21:554/cam/realmonitor?channel=3&subtype=0',
-    //'rtsp://condo:880313@10.0.0.21:554/cam/realmonitor?channel=3&subtype=0',
-    //
-    // VIP 1120B - https://forum.intelbras.com.br/viewtopic.php?t=58960
-    // rtsp://IP:PORTA/user=USUÁRIO&password=SENHA&channel=1&stream=0.sdp?
-    //
-    // Camera portão:
-    //'rtsp://10.0.0.130:555/user=admin&password=tomate1028&channel=1&stream=0.sdp?',
-    //'rtsp://ian:880313@10.0.0.130:554/cam/realmonitor?channel=3&subtype=0',
-    //
-    // Camera externa 103 VIP-3220-B:
-    //'rtsp://USUÁRIO:SENHA@IP:PORTA/cam/realmonitor?channel=1&subtype=0',
-    //'rtsp://condo:tomate1028@10.0.0.103:554/cam/realmonitor?channel=1&subtype=0',
-    //
-    // Camera externa 11 VIP-3220-B:
-    //'rtsp://USUÁRIO:SENHA@IP:PORTA/cam/realmonitor?channel=1&subtype=0',
-    //'rtsp://admin:avila8468@10.0.0.103:554/cam/realmonitor?channel=1&subtype=0',
-    'rtsp://app:tomate1028@10.0.0.103:554/cam/realmonitor?channel=1&subtype=1',
-    autoPlay: true,
-  );
-  final VlcPlayerController _vlcViewControllerPortao130 =
-      VlcPlayerController.network(
-    'rtsp://10.0.0.130:554/user=app&password=tomate1028&channel=1&stream=1.sdp?',
-    autoPlay: true,
-  );
-  final VlcPlayerController _vlcViewControllerSonOff =
-      VlcPlayerController.network(
-    'rtsp://rtsp:12345678@10.0.0.152:554/av_stream/ch0',
-    autoPlay: true,
-  );
-  final VlcPlayerController _vlcViewControllerMuro =
-      VlcPlayerController.network(
-    'rtsp://10.0.0.105:554/user=app&password=tomate1028&channel=1&stream=1.sdp?',
-    autoPlay: true,
-  );
+  @override
+  State<DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<DashboardView> {
+  final List<VlcPlayerController> _vlcControllers = [];
 
   @override
   Widget build(BuildContext context) {
@@ -79,24 +40,33 @@ class DashboardView extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: ListView(
-          children: <Widget>[
-            VlcPlayer(
-              controller: _vlcViewControllerPortao130,
-              aspectRatio: 16 / 9,
-              placeholder: const Text("Vista do alto"),
-            ),
-            VlcPlayer(
-              controller: _vlcViewControllerExterna11,
-              aspectRatio: 16 / 9,
-              placeholder: const Text("Entrada"),
-            ),
-            VlcPlayer(
-              controller: _vlcViewControllerSonOff,
-              aspectRatio: 16 / 9,
-              placeholder: const Text("Portaria"),
-            ),
-          ],
+        child: FirestoreBuilder<CameraQuerySnapshot>(
+          ref: camerasRef.whereEnabled(isEqualTo: true).orderByName(),
+          builder: (context, AsyncSnapshot<CameraQuerySnapshot> snapshot,
+              Widget? child) {
+            if (snapshot.hasError) return const Text('Something went wrong!');
+            if (!snapshot.hasData) return const Text('Loading users...');
+
+            // Access the QuerySnapshot
+            CameraQuerySnapshot querySnapshot = snapshot.requireData;
+
+            return ListView.builder(
+              itemCount: querySnapshot.docs.length,
+              itemBuilder: (context, index) {
+                // Access the User instance
+                Camera camera = querySnapshot.docs[index].data;
+                VlcPlayerController controller =
+                    VlcPlayerController.network(camera.url);
+                _vlcControllers.add(controller);
+
+                return VlcPlayer(
+                  controller: controller,
+                  aspectRatio: 16 / 9,
+                  placeholder: Text(camera.name),
+                );
+              },
+            );
+          },
         ),
       ),
     );
