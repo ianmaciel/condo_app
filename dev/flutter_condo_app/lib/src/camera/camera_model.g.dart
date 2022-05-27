@@ -124,6 +124,7 @@ abstract class CameraDocumentReference
     String url,
     String type,
     String model,
+    int priority,
   });
 
   Future<void> set(Camera value);
@@ -174,6 +175,7 @@ class _$CameraDocumentReference
     Object? url = _sentinel,
     Object? type = _sentinel,
     Object? model = _sentinel,
+    Object? priority = _sentinel,
   }) async {
     final json = {
       if (name != _sentinel) "name": name as String,
@@ -182,6 +184,7 @@ class _$CameraDocumentReference
       if (url != _sentinel) "url": url as String,
       if (type != _sentinel) "type": type as String,
       if (model != _sentinel) "model": model as String,
+      if (priority != _sentinel) "priority": priority as int,
     };
 
     return reference.update(json);
@@ -296,6 +299,17 @@ abstract class CameraQuery implements QueryReference<CameraQuerySnapshot> {
     List<String>? whereIn,
     List<String>? whereNotIn,
   });
+  CameraQuery wherePriority({
+    int? isEqualTo,
+    int? isNotEqualTo,
+    int? isLessThan,
+    int? isLessThanOrEqualTo,
+    int? isGreaterThan,
+    int? isGreaterThanOrEqualTo,
+    bool? isNull,
+    List<int>? whereIn,
+    List<int>? whereNotIn,
+  });
 
   CameraQuery orderByName({
     bool descending = false,
@@ -363,6 +377,18 @@ abstract class CameraQuery implements QueryReference<CameraQuerySnapshot> {
     String startAfter,
     String endAt,
     String endBefore,
+    CameraDocumentSnapshot? startAtDocument,
+    CameraDocumentSnapshot? endAtDocument,
+    CameraDocumentSnapshot? endBeforeDocument,
+    CameraDocumentSnapshot? startAfterDocument,
+  });
+
+  CameraQuery orderByPriority({
+    bool descending = false,
+    int startAt,
+    int startAfter,
+    int endAt,
+    int endBefore,
     CameraDocumentSnapshot? startAtDocument,
     CameraDocumentSnapshot? endAtDocument,
     CameraDocumentSnapshot? endBeforeDocument,
@@ -585,6 +611,34 @@ class _$CameraQuery extends QueryReference<CameraQuerySnapshot>
     return _$CameraQuery(
       reference.where(
         'model',
+        isEqualTo: isEqualTo,
+        isNotEqualTo: isNotEqualTo,
+        isLessThan: isLessThan,
+        isLessThanOrEqualTo: isLessThanOrEqualTo,
+        isGreaterThan: isGreaterThan,
+        isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+        isNull: isNull,
+        whereIn: whereIn,
+        whereNotIn: whereNotIn,
+      ),
+      _collection,
+    );
+  }
+
+  CameraQuery wherePriority({
+    int? isEqualTo,
+    int? isNotEqualTo,
+    int? isLessThan,
+    int? isLessThanOrEqualTo,
+    int? isGreaterThan,
+    int? isGreaterThanOrEqualTo,
+    bool? isNull,
+    List<int>? whereIn,
+    List<int>? whereNotIn,
+  }) {
+    return _$CameraQuery(
+      reference.where(
+        'priority',
         isEqualTo: isEqualTo,
         isNotEqualTo: isNotEqualTo,
         isLessThan: isLessThan,
@@ -851,6 +905,48 @@ class _$CameraQuery extends QueryReference<CameraQuerySnapshot>
     return _$CameraQuery(query, _collection);
   }
 
+  CameraQuery orderByPriority({
+    bool descending = false,
+    Object? startAt = _sentinel,
+    Object? startAfter = _sentinel,
+    Object? endAt = _sentinel,
+    Object? endBefore = _sentinel,
+    CameraDocumentSnapshot? startAtDocument,
+    CameraDocumentSnapshot? endAtDocument,
+    CameraDocumentSnapshot? endBeforeDocument,
+    CameraDocumentSnapshot? startAfterDocument,
+  }) {
+    var query = reference.orderBy('priority', descending: descending);
+
+    if (startAtDocument != null) {
+      query = query.startAtDocument(startAtDocument.snapshot);
+    }
+    if (startAfterDocument != null) {
+      query = query.startAfterDocument(startAfterDocument.snapshot);
+    }
+    if (endAtDocument != null) {
+      query = query.endAtDocument(endAtDocument.snapshot);
+    }
+    if (endBeforeDocument != null) {
+      query = query.endBeforeDocument(endBeforeDocument.snapshot);
+    }
+
+    if (startAt != _sentinel) {
+      query = query.startAt([startAt]);
+    }
+    if (startAfter != _sentinel) {
+      query = query.startAfter([startAfter]);
+    }
+    if (endAt != _sentinel) {
+      query = query.endAt([endAt]);
+    }
+    if (endBefore != _sentinel) {
+      query = query.endBefore([endBefore]);
+    }
+
+    return _$CameraQuery(query, _collection);
+  }
+
   @override
   bool operator ==(Object other) {
     return other is _$CameraQuery &&
@@ -896,6 +992,14 @@ class CameraQueryDocumentSnapshot extends FirestoreQueryDocumentSnapshot
 }
 
 // **************************************************************************
+// ValidatorGenerator
+// **************************************************************************
+
+_$assertCamera(Camera instance) {
+  const Min(0).validate(instance.priority, "priority");
+}
+
+// **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
@@ -906,6 +1010,7 @@ Camera _$CameraFromJson(Map<String, dynamic> json) => Camera(
       url: json['url'] as String,
       type: json['type'] as String,
       model: json['model'] as String,
+      priority: json['priority'] as int? ?? 10,
     );
 
 Map<String, dynamic> _$CameraToJson(Camera instance) => <String, dynamic>{
@@ -915,4 +1020,5 @@ Map<String, dynamic> _$CameraToJson(Camera instance) => <String, dynamic>{
       'url': instance.url,
       'type': instance.type,
       'model': instance.model,
+      'priority': instance.priority,
     };
