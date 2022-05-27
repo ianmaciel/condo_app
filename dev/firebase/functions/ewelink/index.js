@@ -7,31 +7,52 @@ const db = admin.firestore();
 
 /**
  * Start the login with eewlink
- * @param {object} request The first number.
- * @param {object} response The second number.
+ * @param {object} data user-provided data.
+ * @param {object} context automagic context.
  */
-async function getDevices(request, response) {
+async function getDevices(data, context) {
   const ewelink = await init();
 
   /* get all devices */
   const devices = await ewelink.getDevices();
-  if (devices != null) response.send(devices);
-  else response.status(500).send("Devices are null");
+  if (devices != null) {
+    return {
+      status: "ok",
+      code: 200,
+      devices: devices,
+    };
+  }
+  return {
+    status: "error",
+    code: 500,
+    message: "Devices are null",
+  };
 }
 
 /**
  * Start the login with eewlink
- * @param {object} request The first number.
- * @param {object} response The second number.
+ * @param {object} data user-provided data.
+ * @param {object} context automagic context.
  */
-async function toggleCarGate(request, response) {
+async function toggleCarGate(data, context) {
+  if (!context.auth) {
+    return {
+      status: "error",
+      code: 401,
+      message: "Not signed in",
+    };
+  }
+
   const carGateSnapshot = await db.doc(carGateDoc).get();
   const ewelink = await init();
 
   const ewelinkResponse = await ewelink.toggleDevice(
       carGateSnapshot.data().deviceid);
-  const statusCode = ewelinkResponse.status === "ok" ? 200 : 400;
-  response.status(statusCode).send(ewelinkResponse);
+  return {
+    status: "ok",
+    code: 200,
+    message: ewelinkResponse,
+  };
 }
 
 /**
