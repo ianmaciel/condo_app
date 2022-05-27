@@ -28,3 +28,8 @@ the `lib/src/localization` directory.
 To support additional languages, please visit the tutorial on
 [Internationalizing Flutter
 apps](https://flutter.dev/docs/development/accessibility-and-localization/internationalization)
+
+## Release
+
+Create a `gradle.properties` with the release key settings inside `android/app` and run:
+`flutter build apk --release`
