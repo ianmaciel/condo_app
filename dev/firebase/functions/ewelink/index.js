@@ -1,7 +1,7 @@
 const Ewelink = require("ewelink-api");
 const admin = require("firebase-admin");
 const ewelinkDoc = "/configs/ewelinkConnection";
-const carGateDoc = "/publicDevices/carGate";
+const carGateDoc = "/sonoffDevices/carGate";
 admin.initializeApp();
 const db = admin.firestore();
 
