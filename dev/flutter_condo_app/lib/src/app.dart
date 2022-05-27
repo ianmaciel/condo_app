@@ -135,8 +135,9 @@ class MyApp extends StatelessWidget {
                         providerConfigs: providerConfigs,
                         actions: [
                           AuthStateChangeAction<SignedIn>((context, state) {
-                            Navigator.pushReplacementNamed(
-                                context, DashboardView.routeName);
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                DashboardView.routeName,
+                                (Route<dynamic> route) => false);
                           }),
                         ],
                       );

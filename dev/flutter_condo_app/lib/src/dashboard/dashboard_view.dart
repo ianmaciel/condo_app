@@ -22,6 +22,7 @@
 
 import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
 import 'package:condo_app/src/camera/camera_model.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 
@@ -60,37 +61,50 @@ class _DashboardViewState extends State<DashboardView> {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              color: Colors.blueGrey,
-              height: 75,
-              child: const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: GateButton(),
-              ),
-            ),
-            Expanded(
-              child: FirestoreBuilder<CameraQuerySnapshot>(
-                ref: camerasRef
-                    .whereEnabled(isEqualTo: true)
-                    .orderByPriority()
-                    .orderByName(),
-                builder: (context, AsyncSnapshot<CameraQuerySnapshot> snapshot,
-                    Widget? child) {
-                  if (snapshot.hasError) {
-                    return const Text('Something went wrong!');
-                  }
-                  if (!snapshot.hasData) {
-                    return const Text('Loading cameras...');
-                  }
+      body: FirestoreBuilder<CameraQuerySnapshot>(
+        ref: camerasRef
+            .whereEnabled(isEqualTo: true)
+            .orderByPriority()
+            .orderByName(),
+        builder: (context, AsyncSnapshot<CameraQuerySnapshot> snapshot,
+            Widget? child) {
+          if (snapshot.hasError) {
+            FirebaseException error = snapshot.error as FirebaseException;
+            if (error.code == 'permission-denied') {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: Text(
+                    'Seu usuário não possui permissão para acessar o aplicativo.',
+                    style: Theme.of(context).textTheme.titleMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            }
+            return const Text('Something went wrong!');
+          }
+          if (!snapshot.hasData) {
+            return const Text('Loading cameras...');
+          }
 
-                  // Access the QuerySnapshot
-                  CameraQuerySnapshot querySnapshot = snapshot.requireData;
+          // Access the QuerySnapshot
+          CameraQuerySnapshot querySnapshot = snapshot.requireData;
 
-                  return ListView.builder(
+          return Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  color: Colors.blueGrey,
+                  height: 75,
+                  child: const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: GateButton(),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
                     itemCount: querySnapshot.docs.length,
                     itemBuilder: (context, index) {
                       // Access the User instance
@@ -112,12 +126,12 @@ class _DashboardViewState extends State<DashboardView> {
                         ],
                       );
                     },
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
