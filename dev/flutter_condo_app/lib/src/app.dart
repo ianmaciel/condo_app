@@ -30,8 +30,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterfire_ui/auth.dart';
 import 'package:provider/provider.dart';
 
-import 'sample_feature/sample_item_details_view.dart';
-import 'sample_feature/sample_item_list_view.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
 
@@ -113,8 +111,6 @@ class MyApp extends StatelessWidget {
                   switch (routeSettings.name) {
                     case SettingsView.routeName:
                       return SettingsView(controller: settingsController);
-                    case SampleItemDetailsView.routeName:
-                      return const SampleItemDetailsView();
                     case '/profile':
                       return ProfileScreen(
                         providerConfigs: providerConfigs,
@@ -124,8 +120,6 @@ class MyApp extends StatelessWidget {
                           }),
                         ],
                       );
-                    case SampleItemListView.routeName:
-                      return const SampleItemListView();
                     case DashboardView.routeName:
                       return const DashboardView();
                     case '/sign-in':
