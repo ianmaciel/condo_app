@@ -25,16 +25,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const providerConfigs = [
-      // TODO - Remove hardcoded client_id
-      // This client id shouldn't be exposed here. This is just the development
-      // instance/client id and must be removed before include the prodution
-      // environment.
-      // Remove alto these files:
-      // - android/app/google-services.json
-      // - ios/firebase_app_id_file.json
-      // - lib/firebase_options.dart
-      // - macos/firebase_app_id_file.json
-      // EmailProviderConfiguration(),
       GoogleProviderConfiguration(clientId: oAuthClientId)
     ];
 
@@ -115,7 +105,7 @@ class MyApp extends StatelessWidget {
                     case SampleItemListView.routeName:
                       return const SampleItemListView();
                     case DashboardView.routeName:
-                      return DashboardView();
+                      return const DashboardView();
                     case '/sign-in':
                     default:
                       return SignInScreen(

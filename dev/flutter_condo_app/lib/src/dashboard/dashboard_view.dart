@@ -2,14 +2,13 @@ import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
 import 'package:condo_app/src/camera/camera_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
-import 'package:flutterfire_ui/firestore.dart';
 
 import '../settings/settings_view.dart';
 import '../gate_button/gate_button.dart';
 
 /// Displays a list of SampleItems.
 class DashboardView extends StatefulWidget {
-  DashboardView({
+  const DashboardView({
     Key? key,
   }) : super(key: key);
 
@@ -59,10 +58,12 @@ class _DashboardViewState extends State<DashboardView> {
                     .orderByName(),
                 builder: (context, AsyncSnapshot<CameraQuerySnapshot> snapshot,
                     Widget? child) {
-                  if (snapshot.hasError)
+                  if (snapshot.hasError) {
                     return const Text('Something went wrong!');
-                  if (!snapshot.hasData)
+                  }
+                  if (!snapshot.hasData) {
                     return const Text('Loading cameras...');
+                  }
 
                   // Access the QuerySnapshot
                   CameraQuerySnapshot querySnapshot = snapshot.requireData;
