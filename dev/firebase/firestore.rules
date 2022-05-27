@@ -1,8 +1,26 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isAuthenticated() {
+      return request.auth.uid != null;
+    }
+    function hasAccessToApp() {
+      return get(/databases/$(database)/documents/configs/adminSettings).data.allowedUsers.keys().hasAny([request.auth.uid]);
+    }
     match /{document=**} {
       allow read, write: if false;
+    }
+    match /cameras/{cameraId} {
+      allow read, write: if isAuthenticated() && hasAccessToApp();
+      allow write: if false;
+    }
+    match /sonoffDevices/{cameraId} {
+      allow read, write: if isAuthenticated() && hasAccessToApp();
+      allow write: if false;
+    }
+    match /configs/{cameraId} {
+      allow read, write: if isAuthenticated() && hasAccessToApp();
+      allow write: if false;
     }
   }
 }
