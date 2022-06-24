@@ -1,3 +1,7 @@
+## 1.2.2
+* Add logout button
+* Include translation for login screen
+
 ## 1.2.1
 * Disable components not ready for use (virtual key)
 

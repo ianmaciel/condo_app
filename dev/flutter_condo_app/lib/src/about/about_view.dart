@@ -20,6 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -99,6 +100,11 @@ class _AboutState extends State<About> {
               ),
             ),
           ),
+          ListTile(
+            // TODO: translate
+            title: Text('Sair (Logout)'),
+            onTap: _logout,
+          ),
           const Divider(),
           const ListTile(
             // TODO: translate
@@ -111,4 +117,14 @@ class _AboutState extends State<About> {
           ),
         ],
       );
+
+  void _logout() async {
+    await FirebaseAuth.instance.signOut();
+
+    if (!mounted) {
+      return;
+    }
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/sign-in', (Route<dynamic> route) => false);
+  }
 }
