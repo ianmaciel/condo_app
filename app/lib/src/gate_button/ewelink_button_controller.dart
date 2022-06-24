@@ -77,6 +77,8 @@ class EwelinkButtonController with ChangeNotifier {
   void onPressed() async {
     setLoading(true);
     await toggleCarGate();
+    // Add extra three seconds to make sure it is greater than the camera delay
+    await Future.delayed(const Duration(seconds: 3));
     setLoading(false);
   }
 

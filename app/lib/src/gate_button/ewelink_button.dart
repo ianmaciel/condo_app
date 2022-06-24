@@ -33,25 +33,27 @@ class EwelinkButton extends StatefulWidget {
 }
 
 class _EwelinkButtonState extends State<EwelinkButton> {
-  late EwelinkButtonController controller;
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    controller = Provider.of<EwelinkButtonController>(context, listen: true);
+    EwelinkButtonController controller =
+        Provider.of<EwelinkButtonController>(context, listen: false);
     controller.init();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: controller.loading ? null : controller.onPressed,
-      child: controller.loading
-          ? const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: CircularProgressIndicator(),
-            )
-          : const Text('Acionar portão'),
-    );
+    return Consumer<EwelinkButtonController>(
+        builder: (context, controller, child) {
+      return ElevatedButton(
+        onPressed: controller.loading ? null : controller.onPressed,
+        child: controller.loading
+            ? const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                child: CircularProgressIndicator(),
+              )
+            : const Text('Acionar portão'),
+      );
+    });
   }
 }
