@@ -1,4 +1,51 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "cameras",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "enabled",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "priority",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "cameras",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "enabled",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "priority",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "name",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "keys",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "allowedUsers",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "enable",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }
