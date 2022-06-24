@@ -25,6 +25,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../bottom_navigation/bottom_navigation_controller.dart';
+import '../privacy_policy/privacy_policy_view.dart';
 
 class About extends StatefulWidget implements PageModel {
   const About({Key? key}) : super(key: key);
@@ -83,6 +84,15 @@ class _AboutState extends State<About> {
                   applicationName: 'Porto Novo',
                   applicationVersion: packageInfo?.version ?? '',
                 ),
+              ),
+            ),
+          ),
+          ListTile(
+            // TODO: translate
+            title: Text('Política de Privacidade'),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (BuildContext context) => const PrivacyPolicyView(),
               ),
             ),
           ),
