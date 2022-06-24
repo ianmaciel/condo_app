@@ -57,7 +57,7 @@ class BottomNavigationController with ChangeNotifier {
   }
 
   final List<PageModel> views = [
-    const VirtualKey(),
+    if (kDebugMode) const VirtualKeyView(),
     const About(),
   ];
 

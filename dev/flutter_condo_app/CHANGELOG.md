@@ -1,3 +1,6 @@
+## 1.2.1
+* Disable components not ready for use (virtual key)
+
 ## 1.2.0
 * Include Privacy Policy view
 
