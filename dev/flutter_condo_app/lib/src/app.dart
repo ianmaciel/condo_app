@@ -48,10 +48,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const providerConfigs = [
-      GoogleProviderConfiguration(clientId: oAuthClientId)
-    ];
-
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<UserController>(
@@ -76,10 +72,6 @@ class MyApp extends StatelessWidget {
         animation: settingsController,
         builder: (BuildContext context, Widget? child) {
           return MaterialApp(
-            initialRoute: FirebaseAuth.instance.currentUser == null
-                ? '/sign-in'
-                : BottomNavigationView.routeName,
-
             // Providing a restorationScopeId allows the Navigator built by the
             // MaterialApp to restore the navigation stack when a user leaves and
             // returns to the app after it has been killed while running in the
@@ -119,15 +111,18 @@ class MyApp extends StatelessWidget {
             // Define a function to handle named routes in order to support
             // Flutter web url navigation and deep linking.
             onGenerateRoute: (RouteSettings routeSettings) {
+              Widget? protectedRoute;
               return MaterialPageRoute<void>(
                 settings: routeSettings,
                 builder: (BuildContext context) {
                   switch (routeSettings.name) {
                     case SettingsView.routeName:
-                      return SettingsView(controller: settingsController);
+                      protectedRoute =
+                          SettingsView(controller: settingsController);
+                      break;
                     case '/profile':
                       return ProfileScreen(
-                        providerConfigs: providerConfigs,
+                        providerConfigs: _providerConfigs,
                         actions: [
                           SignedOutAction((context) {
                             Navigator.pushReplacementNamed(context, '/sign-in');
@@ -135,21 +130,25 @@ class MyApp extends StatelessWidget {
                         ],
                       );
                     case BottomNavigationView.routeName:
-                      return const BottomNavigationView();
+                      protectedRoute = const BottomNavigationView();
+                      break;
                     case '/sign-in':
                     default:
-                      return SignInScreen(
+                      protectedRoute = SignInScreen(
                         showAuthActionSwitch: false,
-                        providerConfigs: providerConfigs,
+                        providerConfigs: _providerConfigs,
                         actions: [
-                          AuthStateChangeAction<SignedIn>((context, state) {
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                                BottomNavigationView.routeName,
-                                (Route<dynamic> route) => false);
-                          }),
+                          AuthStateChangeAction<SignedIn>(
+                            (context, state) {
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                  BottomNavigationView.routeName,
+                                  (Route<dynamic> route) => false);
+                            },
+                          ),
                         ],
                       );
                   }
+                  return _ProtectedRoute(child: protectedRoute);
                 },
               );
             },
@@ -158,4 +157,39 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
+}
+
+const _providerConfigs = [GoogleProviderConfiguration(clientId: oAuthClientId)];
+
+class _ProtectedRoute extends StatelessWidget {
+  const _ProtectedRoute({required this.child, Key? key}) : super(key: key);
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context) => StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        initialData: FirebaseAuth.instance.currentUser,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (!snapshot.hasData) {
+            return SignInScreen(
+              showAuthActionSwitch: false,
+              providerConfigs: _providerConfigs,
+              actions: [
+                AuthStateChangeAction<SignedIn>((context, state) {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      BottomNavigationView.routeName,
+                      (Route<dynamic> route) => false);
+                }),
+              ],
+            );
+          }
+          return child ?? const Center(child: Text('Página desconhecida'));
+        },
+      );
 }
