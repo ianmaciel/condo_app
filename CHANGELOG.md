@@ -1,5 +1,7 @@
 ## 1.2.3
-* 
+* Include form to create virtual keys
+* Make login persistent on web
+* Fix gate button height and loading state
 
 ## 1.2.2
 * Add logout button
