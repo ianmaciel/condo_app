@@ -54,7 +54,7 @@ class _$VirtualKeyCollectionReference extends _$VirtualKeyQuery
     firestore ??= FirebaseFirestore.instance;
 
     return _$VirtualKeyCollectionReference._(
-      firestore.collection('keys').withConverter(
+      firestore.collection('virtualKeys').withConverter(
             fromFirestore: VirtualKeyCollectionReference.fromFirestore,
             toFirestore: VirtualKeyCollectionReference.toFirestore,
           ),
@@ -122,6 +122,7 @@ abstract class VirtualKeyDocumentReference
   Future<void> update({
     String name,
     List<dynamic> allowedUsers,
+    String owner,
     String token,
     int errors,
     String errorMessage,
@@ -173,6 +174,7 @@ class _$VirtualKeyDocumentReference
   Future<void> update({
     Object? name = _sentinel,
     Object? allowedUsers = _sentinel,
+    Object? owner = _sentinel,
     Object? token = _sentinel,
     Object? errors = _sentinel,
     Object? errorMessage = _sentinel,
@@ -183,6 +185,7 @@ class _$VirtualKeyDocumentReference
       if (name != _sentinel) "name": name as String,
       if (allowedUsers != _sentinel)
         "allowedUsers": allowedUsers as List<dynamic>,
+      if (owner != _sentinel) "owner": owner as String,
       if (token != _sentinel) "token": token as String,
       if (errors != _sentinel) "errors": errors as int,
       if (errorMessage != _sentinel) "errorMessage": errorMessage as String,
@@ -258,6 +261,17 @@ abstract class VirtualKeyQuery
     bool? isNull,
     List<dynamic>? arrayContainsAny,
   });
+  VirtualKeyQuery whereOwner({
+    String? isEqualTo,
+    String? isNotEqualTo,
+    String? isLessThan,
+    String? isLessThanOrEqualTo,
+    String? isGreaterThan,
+    String? isGreaterThanOrEqualTo,
+    bool? isNull,
+    List<String>? whereIn,
+    List<String>? whereNotIn,
+  });
   VirtualKeyQuery whereToken({
     String? isEqualTo,
     String? isNotEqualTo,
@@ -332,6 +346,18 @@ abstract class VirtualKeyQuery
     List<dynamic> startAfter,
     List<dynamic> endAt,
     List<dynamic> endBefore,
+    VirtualKeyDocumentSnapshot? startAtDocument,
+    VirtualKeyDocumentSnapshot? endAtDocument,
+    VirtualKeyDocumentSnapshot? endBeforeDocument,
+    VirtualKeyDocumentSnapshot? startAfterDocument,
+  });
+
+  VirtualKeyQuery orderByOwner({
+    bool descending = false,
+    String startAt,
+    String startAfter,
+    String endAt,
+    String endBefore,
     VirtualKeyDocumentSnapshot? startAtDocument,
     VirtualKeyDocumentSnapshot? endAtDocument,
     VirtualKeyDocumentSnapshot? endBeforeDocument,
@@ -509,6 +535,34 @@ class _$VirtualKeyQuery extends QueryReference<VirtualKeyQuerySnapshot>
         isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
         isNull: isNull,
         arrayContainsAny: arrayContainsAny,
+      ),
+      _collection,
+    );
+  }
+
+  VirtualKeyQuery whereOwner({
+    String? isEqualTo,
+    String? isNotEqualTo,
+    String? isLessThan,
+    String? isLessThanOrEqualTo,
+    String? isGreaterThan,
+    String? isGreaterThanOrEqualTo,
+    bool? isNull,
+    List<String>? whereIn,
+    List<String>? whereNotIn,
+  }) {
+    return _$VirtualKeyQuery(
+      reference.where(
+        'owner',
+        isEqualTo: isEqualTo,
+        isNotEqualTo: isNotEqualTo,
+        isLessThan: isLessThan,
+        isLessThanOrEqualTo: isLessThanOrEqualTo,
+        isGreaterThan: isGreaterThan,
+        isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+        isNull: isNull,
+        whereIn: whereIn,
+        whereNotIn: whereNotIn,
       ),
       _collection,
     );
@@ -708,6 +762,48 @@ class _$VirtualKeyQuery extends QueryReference<VirtualKeyQuerySnapshot>
     VirtualKeyDocumentSnapshot? startAfterDocument,
   }) {
     var query = reference.orderBy('allowedUsers', descending: descending);
+
+    if (startAtDocument != null) {
+      query = query.startAtDocument(startAtDocument.snapshot);
+    }
+    if (startAfterDocument != null) {
+      query = query.startAfterDocument(startAfterDocument.snapshot);
+    }
+    if (endAtDocument != null) {
+      query = query.endAtDocument(endAtDocument.snapshot);
+    }
+    if (endBeforeDocument != null) {
+      query = query.endBeforeDocument(endBeforeDocument.snapshot);
+    }
+
+    if (startAt != _sentinel) {
+      query = query.startAt([startAt]);
+    }
+    if (startAfter != _sentinel) {
+      query = query.startAfter([startAfter]);
+    }
+    if (endAt != _sentinel) {
+      query = query.endAt([endAt]);
+    }
+    if (endBefore != _sentinel) {
+      query = query.endBefore([endBefore]);
+    }
+
+    return _$VirtualKeyQuery(query, _collection);
+  }
+
+  VirtualKeyQuery orderByOwner({
+    bool descending = false,
+    Object? startAt = _sentinel,
+    Object? startAfter = _sentinel,
+    Object? endAt = _sentinel,
+    Object? endBefore = _sentinel,
+    VirtualKeyDocumentSnapshot? startAtDocument,
+    VirtualKeyDocumentSnapshot? endAtDocument,
+    VirtualKeyDocumentSnapshot? endBeforeDocument,
+    VirtualKeyDocumentSnapshot? startAfterDocument,
+  }) {
+    var query = reference.orderBy('owner', descending: descending);
 
     if (startAtDocument != null) {
       query = query.startAtDocument(startAtDocument.snapshot);
@@ -998,13 +1094,19 @@ class VirtualKeyQueryDocumentSnapshot extends FirestoreQueryDocumentSnapshot
 
 VirtualKey _$VirtualKeyFromJson(Map<String, dynamic> json) => VirtualKey(
       name: json['name'] as String,
-      allowedUsers: json['allowedUsers'] as List<dynamic>,
-      owner: json['owner'],
-      token: json['token'] as String,
-      errors: json['errors'] as int,
-      errorMessage: json['errorMessage'] as String,
-      type: json['type'] as String,
+      allowedUsers: json['allowedUsers'] as List<dynamic>? ?? const [],
+      owner: json['owner'] as String,
+      token: json['token'] as String? ?? 'mytoken',
+      errors: json['errors'] as int? ?? 0,
+      errorMessage: json['errorMessage'] as String? ?? '',
+      type: json['type'] as String? ?? 'regular',
       validThru: DateTime.parse(json['validThru'] as String),
+      validFrom: json['validFrom'] == null
+          ? null
+          : DateTime.parse(json['validFrom'] as String),
+      createdAt: json['createdAt'] == null
+          ? null
+          : DateTime.parse(json['createdAt'] as String),
       enable: json['enable'] as bool,
     );
 
@@ -1018,5 +1120,7 @@ Map<String, dynamic> _$VirtualKeyToJson(VirtualKey instance) =>
       'errorMessage': instance.errorMessage,
       'type': instance.type,
       'validThru': instance.validThru.toIso8601String(),
+      'validFrom': instance.validFrom?.toIso8601String(),
+      'createdAt': instance.createdAt?.toIso8601String(),
       'enable': instance.enable,
     };

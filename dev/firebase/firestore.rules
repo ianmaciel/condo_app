@@ -10,6 +10,9 @@ service cloud.firestore {
     function hasAnyRole(roles) {
       return isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles.hasAny(roles)
     }
+    function hasAccessToTheDocument() {
+      return isAuthenticated() && resource.data.allowedUsers.hasAny([request.auth.uid])
+    }
     function hasRole(role) {
       return hasAnyRole([role])
     }
@@ -54,6 +57,12 @@ service cloud.firestore {
       // TODO - Delete the next line
       allow read: if isAuthenticated() && hasAccessToApp();
       allow write: if isAuthenticated() && hasAccessToApp();
+    }
+    match /virtualKeys/{keyId} {
+      allow read: if hasAnyRole(['admin']) || isOwner(resource.data.owner);
+      allow update: if hasRole('admin') || isOwner(resource.data.owner);
+      allow read: if hasAccessToTheDocument();
+      allow create: if hasAnyRole(['admin', 'resident']);
     }
   }
 }

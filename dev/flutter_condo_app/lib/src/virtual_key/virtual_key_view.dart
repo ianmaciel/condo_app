@@ -50,44 +50,39 @@ class VirtualKeyView extends StatelessWidget implements PageModel {
 
   @override
   Widget build(BuildContext context) =>
-      FirebaseAuth.instance.currentUser == null
-          ? Container()
-          : FirestoreBuilder<VirtualKeyQuerySnapshot>(
-              ref: virtualKeysRef.whereAllowedUsers(arrayContainsAny: [
-                FirebaseAuth.instance.currentUser!.uid
-              ]).orderByEnable(),
-              builder: (context,
-                  AsyncSnapshot<VirtualKeyQuerySnapshot> snapshot,
-                  Widget? child) {
-                if (snapshot.hasError) {
-                  FirebaseException error = snapshot.error as FirebaseException;
-                  if (error.code == 'permission-denied') {
-                    return Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Center(
-                        child: Text(
-                          // TODO: translate
-                          'Seu usuário não possui permissão para acessar o aplicativo.',
-                          style: Theme.of(context).textTheme.titleMedium,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    );
-                  }
-                  return const Text('Something went wrong!');
-                }
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                // Access the QuerySnapshot
-                VirtualKeyQuerySnapshot querySnapshot = snapshot.requireData;
-
-                return _KeysListView(querySnapshot.docs);
-              },
+      FirestoreBuilder<VirtualKeyQuerySnapshot>(
+        ref: getFirestoreQuery(context),
+        builder: (context, AsyncSnapshot<VirtualKeyQuerySnapshot> snapshot,
+            Widget? child) {
+          if (snapshot.hasError) {
+            FirebaseException error = snapshot.error as FirebaseException;
+            if (error.code == 'permission-denied') {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: Text(
+                    // TODO: translate
+                    'Seu usuário não possui permissão para acessar o aplicativo.',
+                    style: Theme.of(context).textTheme.titleMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            }
+            return const Text('Something went wrong!');
+          }
+          if (!snapshot.hasData) {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
+          }
+
+          // Access the QuerySnapshot
+          VirtualKeyQuerySnapshot querySnapshot = snapshot.requireData;
+
+          return _KeysListView(querySnapshot.docs);
+        },
+      );
 
   @override
   Widget? getFloatingButton(BuildContext context) => Consumer<UserController>(
@@ -105,6 +100,18 @@ class VirtualKeyView extends StatelessWidget implements PageModel {
           return Container();
         },
       );
+
+  FirestoreListenable<VirtualKeyQuerySnapshot> getFirestoreQuery(
+      BuildContext context) {
+    UserController userController = Provider.of<UserController>(context);
+
+    if (userController.isAdmin || userController.isResident) {
+      return virtualKeysRef.whereOwner(isEqualTo: userController.uid!);
+    }
+    return virtualKeysRef.whereAllowedUsers(arrayContainsAny: [
+      FirebaseAuth.instance.currentUser!.uid
+    ]).orderByEnable();
+  }
 }
 
 class _KeysListView extends StatelessWidget {

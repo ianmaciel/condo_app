@@ -497,6 +497,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.1"
+  forme:
+    dependency: "direct main"
+    description:
+      name: forme
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.1.3+1"
+  forme_base_fields:
+    dependency: "direct main"
+    description:
+      name: forme_base_fields
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.2.1"
   frontend_server_client:
     dependency: transitive
     description:

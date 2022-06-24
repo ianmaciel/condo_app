@@ -1,3 +1,6 @@
+## 1.2.3
+* 
+
 ## 1.2.2
 * Add logout button
 * Include translation for login screen

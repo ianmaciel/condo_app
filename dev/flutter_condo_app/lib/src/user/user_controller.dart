@@ -36,4 +36,6 @@ class UserController with ChangeNotifier {
 
   bool get isAdmin => user?.isAdmin() ?? false;
   bool get isResident => user?.isResident() ?? false;
+  bool get isGuest => !isResident && !isAdmin;
+  String? get uid => user?.firebaseUser?.uid;
 }

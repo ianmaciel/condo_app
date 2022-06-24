@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
 
@@ -30,30 +31,49 @@ part 'virtual_key_model.g.dart';
 class VirtualKey {
   final String name;
   final List<dynamic> allowedUsers;
-  final dynamic owner;
+  final String owner;
   final String token;
   final int errors;
   final String errorMessage;
   final String type;
   final DateTime validThru;
+  DateTime? validFrom;
+  DateTime? createdAt;
   final bool enable;
 
   VirtualKey({
     required this.name,
-    required this.allowedUsers,
+    this.allowedUsers = const [],
     required this.owner,
-    required this.token,
-    required this.errors,
-    required this.errorMessage,
-    required this.type,
+    // TODO: create a valid token
+    this.token = 'mytoken',
+    this.errors = 0,
+    this.errorMessage = '',
+    this.type = 'regular',
     required this.validThru,
+    this.validFrom,
+    this.createdAt,
     required this.enable,
-  });
+  }) {
+    validFrom ??= DateTime.now();
+  }
 
   factory VirtualKey.fromJson(Map<String, dynamic> json) =>
       _$VirtualKeyFromJson(json);
   Map<String, dynamic> toJson() => _$VirtualKeyToJson(this);
+
+  bool isValid() {
+    DateTime now = DateUtils.dateOnly(DateTime.now());
+    return enable &&
+        !validFrom!.isAfterOrSameTime(now) &&
+        !validThru.isBeforeOrSameTime(now);
+  }
 }
 
-@Collection<VirtualKey>('keys')
+extension DateTimeOrSameTime on DateTime {
+  bool isAfterOrSameTime(DateTime other) => !isBefore(other);
+  bool isBeforeOrSameTime(DateTime other) => !isAfter(other);
+}
+
+@Collection<VirtualKey>('virtualKeys')
 final virtualKeysRef = VirtualKeyCollectionReference();
