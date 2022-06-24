@@ -22,6 +22,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../bottom_navigation/bottom_navigation_controller.dart';
 
@@ -47,6 +48,8 @@ class About extends StatefulWidget implements PageModel {
 
 class _AboutState extends State<About> {
   PackageInfo? packageInfo;
+  final String authorEmail = 'ianmaciel@gmail.com';
+
   @override
   void initState() {
     super.initState();
@@ -88,8 +91,10 @@ class _AboutState extends State<About> {
             // TODO: translate
             title: SelectableText('Desenvolvido por Ian Maciel'),
           ),
-          const ListTile(
-            title: SelectableText('ianmaciel@gmail.com'),
+          ListTile(
+            title: Text(authorEmail),
+            onTap: () => launchUrl(Uri.parse(
+                'mailto:$authorEmail?subject=${packageInfo?.packageName}')),
           ),
         ],
       );
