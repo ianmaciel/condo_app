@@ -18,9 +18,13 @@ service cloud.firestore {
       allow read: if isAuthenticated() && hasAccessToApp();
       allow write: if false;
     }
-    match /configs/{cameraId} {
+    match /configs/adminSettings {
       allow read: if isAuthenticated() && hasAccessToApp();
       allow write: if false;
+    }
+    match /configs/ewelinkConnection {
+      allow read: if isAuthenticated() && hasAccessToApp();
+      allow write: if isAuthenticated() && hasAccessToApp();
     }
   }
 }
