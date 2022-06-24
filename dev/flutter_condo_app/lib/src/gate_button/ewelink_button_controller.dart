@@ -20,6 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:dart_ewelink_api/dart_ewelink_api.dart';
@@ -55,17 +57,20 @@ class EwelinkButtonController with ChangeNotifier {
       return;
     }
 
-    //await FirebaseFunctions.instance.httpsCallable('toggleCarGate').call();
-    ewelinkApi = await getEwelinkApi();
+    if (kIsWeb) {
+      await FirebaseFunctions.instance.httpsCallable('toggleCarGate').call();
+    } else {
+      ewelinkApi = await getEwelinkApi();
+    }
 
     // Toogle device by its id
     try {
       // TODO change device id
-      await ewelinkApi!.toggleDevice(deviceId: 'zxxx');
+      await ewelinkApi!.toggleDevice(deviceId: '10000ffeb5');
     } on EwelinkInvalidAccessToken {
       _ewelinkConfig!.auth = null;
       ewelinkApi = await getEwelinkApi(recreate: true);
-      await ewelinkApi!.toggleDevice(deviceId: 'zxxx');
+      await ewelinkApi!.toggleDevice(deviceId: '10000ffeb5');
     }
   }
 
