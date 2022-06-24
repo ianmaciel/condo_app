@@ -21,8 +21,7 @@
 // SOFTWARE.
 
 import 'package:condo_app/firebase_options.dart';
-import 'package:condo_app/src/dashboard/dashboard_view.dart';
-import 'package:condo_app/src/gate_button/ewelink_button_controller.dart';
+import 'package:condo_app/src/bottom_navigation/bottom_navigation_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -32,6 +31,8 @@ import 'package:provider/provider.dart';
 
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
+import 'bottom_navigation/bottom_navigation_view.dart';
+import 'gate_button/ewelink_button_controller.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -53,6 +54,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<EwelinkButtonController>(
           create: (_) => EwelinkButtonController(),
           lazy: false,
+        ),
+        ChangeNotifierProvider<BottomNavigationController>(
+          create: (_) => BottomNavigationController(),
+          lazy: false,
         )
       ],
 
@@ -66,7 +71,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             initialRoute: FirebaseAuth.instance.currentUser == null
                 ? '/sign-in'
-                : DashboardView.routeName,
+                : BottomNavigationView.routeName,
 
             // Providing a restorationScopeId allows the Navigator built by the
             // MaterialApp to restore the navigation stack when a user leaves and
@@ -120,8 +125,8 @@ class MyApp extends StatelessWidget {
                           }),
                         ],
                       );
-                    case DashboardView.routeName:
-                      return const DashboardView();
+                    case BottomNavigationView.routeName:
+                      return const BottomNavigationView();
                     case '/sign-in':
                     default:
                       return SignInScreen(
@@ -130,7 +135,7 @@ class MyApp extends StatelessWidget {
                         actions: [
                           AuthStateChangeAction<SignedIn>((context, state) {
                             Navigator.of(context).pushNamedAndRemoveUntil(
-                                DashboardView.routeName,
+                                BottomNavigationView.routeName,
                                 (Route<dynamic> route) => false);
                           }),
                         ],

@@ -21,35 +21,47 @@
 // SOFTWARE.
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
 
-part 'camera_model.g.dart';
+part 'condo_app_user_model.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class Camera {
-  Camera({
-    required this.name,
-    this.description = '',
-    this.enabled = false,
-    required this.url,
-    required this.type,
-    required this.model,
-    this.priority = 10,
-  });
+class CondoAppUser {
+  CondoAppUser({
+    this.email,
+    this.roles,
+    this.firebaseUser,
+  }) {
+    if (firebaseUser != null) {
+      email = firebaseUser?.email;
+    }
+  }
 
-  final String name;
-  final String description;
-  final bool enabled;
-  final String url;
-  final String type;
-  final String model;
-  @Min(0)
-  final int priority;
+  String? email;
+  List<String>? roles;
+  @JsonKey(ignore: true)
+  User? firebaseUser;
+  bool isAdmin() => roles?.any((element) => element == 'admin') ?? false;
+  bool isResident() => roles?.any((element) => element == 'resident') ?? false;
 
-  factory Camera.fromJson(Map<String, Object?> json) => _$CameraFromJson(json);
-  Map<String, Object?> toJson() => _$CameraToJson(this);
+  static Future<CondoAppUser?> fromFirebaseUser() async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      return null;
+    }
+    CondoAppUserDocumentSnapshot documentSnapshot = await condoAppUsersRef
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get();
+    CondoAppUser condoUser = documentSnapshot.data!;
+    condoUser.firebaseUser = FirebaseAuth.instance.currentUser;
+    return condoUser;
+  }
+
+  factory CondoAppUser.fromJson(Map<String, Object?> json) =>
+      _$CondoAppUserFromJson(json);
+  Map<String, Object?> toJson() => _$CondoAppUserToJson(this);
 }
 
-@Collection<Camera>('cameras')
-final camerasRef = CameraCollectionReference();
+@Collection<CondoAppUser>('users')
+final condoAppUsersRef = CondoAppUserCollectionReference();

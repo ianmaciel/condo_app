@@ -25,40 +25,31 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'camera_listview.dart';
+import '../bottom_navigation/bottom_navigation_controller.dart';
 import '../settings/settings_view.dart';
 import '../camera/camera_model.dart';
 
 /// Displays a list of SampleItems.
-class DashboardView extends StatefulWidget {
+class DashboardView extends StatelessWidget implements PageModel {
   const DashboardView({
     Key? key,
   }) : super(key: key);
 
-  static const routeName = '/';
+  @override
+  final String routeName = '/dashboard';
+  // TODO: translate
+  @override
+  final String routeTitle = 'Painel';
+  @override
+  final BottomNavigationBarItem navigationButton =
+      const BottomNavigationBarItem(
+    icon: Icon(Icons.camera_alt),
+    // TODO: translate
+    label: 'Painel',
+  );
 
   @override
-  State<DashboardView> createState() => _DashboardViewState();
-}
-
-class _DashboardViewState extends State<DashboardView> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              // Navigate to the settings page. If the user leaves and returns
-              // to the app after it has been killed while running in the
-              // background, the navigation stack is restored.
-              Navigator.restorablePushNamed(context, SettingsView.routeName);
-            },
-          ),
-        ],
-      ),
-      body: FirestoreBuilder<CameraQuerySnapshot>(
+  Widget build(BuildContext context) => FirestoreBuilder<CameraQuerySnapshot>(
         ref: camerasRef
             .whereEnabled(isEqualTo: true)
             .orderByPriority()
@@ -90,7 +81,5 @@ class _DashboardViewState extends State<DashboardView> {
 
           return CameraListView(cameras: querySnapshot.docs);
         },
-      ),
-    );
-  }
+      );
 }

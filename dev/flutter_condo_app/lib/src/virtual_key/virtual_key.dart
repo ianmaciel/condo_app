@@ -20,36 +20,32 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
+import 'package:flutter/material.dart';
 
-part 'camera_model.g.dart';
+import '../bottom_navigation/bottom_navigation_controller.dart';
 
-@JsonSerializable(explicitToJson: true)
-class Camera {
-  Camera({
-    required this.name,
-    this.description = '',
-    this.enabled = false,
-    required this.url,
-    required this.type,
-    required this.model,
-    this.priority = 10,
-  });
+class VirtualKey extends StatelessWidget implements PageModel {
+  const VirtualKey({Key? key}) : super(key: key);
 
-  final String name;
-  final String description;
-  final bool enabled;
-  final String url;
-  final String type;
-  final String model;
-  @Min(0)
-  final int priority;
+  @override
+  final String routeName = '/virtual_key';
+  // TODO: translate
+  @override
+  final String routeTitle = 'Chave Virtual';
+  @override
+  final BottomNavigationBarItem navigationButton =
+      const BottomNavigationBarItem(
+    icon: Icon(Icons.key),
+    // TODO: translate
+    label: 'Chave Virtual',
+  );
 
-  factory Camera.fromJson(Map<String, Object?> json) => _$CameraFromJson(json);
-  Map<String, Object?> toJson() => _$CameraToJson(this);
+  @override
+  Widget build(BuildContext context) => Center(
+        child: Text(
+          'Em construção...',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+      );
 }
-
-@Collection<Camera>('cameras')
-final camerasRef = CameraCollectionReference();
