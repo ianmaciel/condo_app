@@ -11,15 +11,15 @@ service cloud.firestore {
       allow read, write: if false;
     }
     match /cameras/{cameraId} {
-      allow read, write: if isAuthenticated() && hasAccessToApp();
+      allow read: if isAuthenticated() && hasAccessToApp();
       allow write: if false;
     }
     match /sonoffDevices/{cameraId} {
-      allow read, write: if isAuthenticated() && hasAccessToApp();
+      allow read: if isAuthenticated() && hasAccessToApp();
       allow write: if false;
     }
     match /configs/{cameraId} {
-      allow read, write: if isAuthenticated() && hasAccessToApp();
+      allow read: if isAuthenticated() && hasAccessToApp();
       allow write: if false;
     }
   }
