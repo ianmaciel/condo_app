@@ -63,6 +63,7 @@ class DashboardView extends StatelessWidget implements PageModel {
                 padding: const EdgeInsets.all(16.0),
                 child: Center(
                   child: Text(
+                    // TODO: translate
                     'Seu usuário não possui permissão para acessar o aplicativo.',
                     style: Theme.of(context).textTheme.titleMedium,
                     textAlign: TextAlign.center,
