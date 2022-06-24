@@ -7,22 +7,51 @@ service cloud.firestore {
     function hasAccessToApp() {
       return get(/databases/$(database)/documents/configs/adminSettings).data.allowedUsers.keys().hasAny([request.auth.uid]);
     }
+    function hasAnyRole(roles) {
+      return isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles.hasAny(roles)
+    }
+    function hasRole(role) {
+      return hasAnyRole([role])
+    }
+    function isOwner(user) {
+      return user == request.auth.uid;
+    }
     match /{document=**} {
       allow read, write: if false;
     }
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+
+      // Do not allow to create users with elevated privilegies.
+      allow write: if isOwner(userId) && request.resource.data.roles.keys().hasAny(['admin', 'resident']) == false;
+      allow write, delete: if hasRole('admin');
+    }
     match /cameras/{cameraId} {
+      // TODO - Delete the next line
       allow read: if isAuthenticated() && hasAccessToApp();
+
+      allow read: if hasAnyRole(['admin', 'resident']);
       allow write: if false;
     }
     match /sonoffDevices/{cameraId} {
+      allow read: if hasAnyRole(['admin', 'resident']);
+      allow write: if hasRole('admin');
+
+      // TODO - Delete the next line
       allow read: if isAuthenticated() && hasAccessToApp();
-      allow write: if false;
     }
     match /configs/adminSettings {
+      allow read: if hasAnyRole(['admin', 'resident']);
+      allow write: if hasRole('admin');
+
+      // TODO - Delete the next line
       allow read: if isAuthenticated() && hasAccessToApp();
-      allow write: if false;
     }
     match /configs/ewelinkConnection {
+      allow read: if hasAnyRole(['admin', 'resident']);
+      allow write: if hasAnyRole(['admin', 'resident']);
+
+      // TODO - Delete the next line
       allow read: if isAuthenticated() && hasAccessToApp();
       allow write: if isAuthenticated() && hasAccessToApp();
     }
