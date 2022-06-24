@@ -28,6 +28,7 @@ import '../dashboard/dashboard_view.dart';
 import '../virtual_key/virtual_key_view.dart';
 import '../about/about_view.dart';
 import '../user/user_controller.dart';
+import '../guest_access/guest_access_view.dart';
 
 class BottomNavigationController with ChangeNotifier {
   final UserController userController;
@@ -50,6 +51,8 @@ class BottomNavigationController with ChangeNotifier {
     isLoading = false;
     if (user!.isAdmin() || user!.isResident()) {
       views.insert(0, const DashboardView());
+    } else {
+      views.insert(0, const GuestAccess());
     }
     isLoading = false;
     notifyListeners();
