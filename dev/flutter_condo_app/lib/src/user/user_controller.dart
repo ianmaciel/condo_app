@@ -20,32 +20,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
-import '../bottom_navigation/bottom_navigation_controller.dart';
+import '../bottom_navigation/condo_app_user_model.dart';
 
-class VirtualKey extends StatelessWidget implements PageModel {
-  const VirtualKey({Key? key}) : super(key: key);
+class UserController with ChangeNotifier {
+  bool isLoading = true;
+  CondoAppUser? user;
 
-  @override
-  final String routeName = '/virtual_key';
-  // TODO: translate
-  @override
-  final String routeTitle = 'Chave Virtual';
-  @override
-  final BottomNavigationBarItem navigationButton =
-      const BottomNavigationBarItem(
-    icon: Icon(Icons.key),
-    // TODO: translate
-    label: 'Chave Virtual',
-  );
+  Future<void> loadUserController() async {
+    user = await CondoAppUser.fromFirebaseUser();
+    isLoading = false;
+    notifyListeners();
+  }
 
-  @override
-  Widget build(BuildContext context) => Center(
-        child: Text(
-          'Em construção...',
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-      );
+  bool get isAdmin => user?.isAdmin() ?? false;
+  bool get isResident => user?.isResident() ?? false;
 }

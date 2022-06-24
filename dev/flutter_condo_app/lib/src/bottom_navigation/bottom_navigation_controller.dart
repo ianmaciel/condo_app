@@ -20,35 +20,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'package:condo_app/src/about/about_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'condo_app_user_model.dart';
 import '../dashboard/dashboard_view.dart';
-import '../virtual_key/virtual_key.dart';
+import '../virtual_key/virtual_key_view.dart';
+import '../about/about_view.dart';
+import '../user/user_controller.dart';
 
 class BottomNavigationController with ChangeNotifier {
+  final UserController userController;
   int _selectedIndex = 0;
   int get selectedIndex => _selectedIndex;
+  BottomNavigationController(this.userController);
 
   CondoAppUser? user;
   bool isLoading = true;
 
   init() async {
-    CondoAppUser.fromFirebaseUser().then((condoAppUser) {
-      if (condoAppUser == null) {
-        isLoading = false;
-        notifyListeners();
-        return;
-      }
-      user = condoAppUser;
-      isLoading = false;
-      if (user!.isAdmin() || user!.isResident()) {
-        views.insert(0, const DashboardView());
-      }
+    await userController.loadUserController();
+
+    if (userController.user == null) {
       isLoading = false;
       notifyListeners();
-    });
+      return;
+    }
+    user = userController.user;
+    isLoading = false;
+    if (user!.isAdmin() || user!.isResident()) {
+      views.insert(0, const DashboardView());
+    }
+    isLoading = false;
+    notifyListeners();
   }
 
   void onItemTapped(int index) {
@@ -71,6 +75,9 @@ class BottomNavigationController with ChangeNotifier {
       isLoading ? const Text('') : Text(views[_selectedIndex].routeTitle);
   Widget get currentWidget =>
       isLoading ? Container() : views[_selectedIndex] as Widget;
+
+  Widget? getFloatingButton(BuildContext context) =>
+      isLoading ? null : views[_selectedIndex].getFloatingButton(context);
 }
 
 class PageModel {
@@ -82,4 +89,6 @@ class PageModel {
     required this.routeTitle,
     required this.navigationButton,
   });
+
+  Widget? getFloatingButton(BuildContext context) => null;
 }

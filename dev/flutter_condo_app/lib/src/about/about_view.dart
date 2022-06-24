@@ -45,6 +45,9 @@ class About extends StatefulWidget implements PageModel {
     // TODO: translate
     label: 'Sobre',
   );
+
+  @override
+  Widget? getFloatingButton(BuildContext context) => null;
 }
 
 class _AboutState extends State<About> {

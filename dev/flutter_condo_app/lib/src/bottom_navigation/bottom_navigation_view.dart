@@ -64,6 +64,7 @@ class _BottomNavigationViewState extends State<BottomNavigationView> {
         ),
         bottomNavigationBar: const _BottomNavigationBar(),
         body: const _Body(),
+        floatingActionButton: const _FloatingButton(),
       );
 }
 
@@ -89,6 +90,17 @@ class _Body extends StatelessWidget {
   Widget build(BuildContext context) => Consumer<BottomNavigationController>(
         builder: (context, controller, child) {
           return controller.getCurrentView();
+        },
+      );
+}
+
+class _FloatingButton extends StatelessWidget {
+  const _FloatingButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Consumer<BottomNavigationController>(
+        builder: (context, controller, child) {
+          return controller.getFloatingButton(context) ?? Container();
         },
       );
 }

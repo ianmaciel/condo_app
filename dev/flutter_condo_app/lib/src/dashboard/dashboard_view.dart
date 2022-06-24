@@ -73,7 +73,9 @@ class DashboardView extends StatelessWidget implements PageModel {
             return const Text('Something went wrong!');
           }
           if (!snapshot.hasData) {
-            return const Text('Loading cameras...');
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           // Access the QuerySnapshot
@@ -82,4 +84,7 @@ class DashboardView extends StatelessWidget implements PageModel {
           return CameraListView(cameras: querySnapshot.docs);
         },
       );
+
+  @override
+  Widget? getFloatingButton(BuildContext context) => null;
 }
