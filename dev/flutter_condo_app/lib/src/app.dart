@@ -22,7 +22,7 @@
 
 import 'package:condo_app/firebase_options.dart';
 import 'package:condo_app/src/dashboard/dashboard_view.dart';
-import 'package:condo_app/src/gate_button/gate_button_controller.dart';
+import 'package:condo_app/src/gate_button/ewelink_button_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -50,8 +50,8 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<GateButtonController>(
-          create: (_) => GateButtonController(),
+        ChangeNotifierProvider<EwelinkButtonController>(
+          create: (_) => EwelinkButtonController(),
           lazy: false,
         )
       ],

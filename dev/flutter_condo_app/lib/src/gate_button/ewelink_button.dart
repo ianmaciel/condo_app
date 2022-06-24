@@ -20,24 +20,38 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import 'package:condo_app/src/gate_button/ewelink_button_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 
-class GateButtonController with ChangeNotifier {
-  bool loading = false;
+import 'package:provider/provider.dart';
 
-  FirebaseFunctions functions = FirebaseFunctions.instance;
+class EwelinkButton extends StatefulWidget {
+  const EwelinkButton({Key? key}) : super(key: key);
 
-  Future<void> toggleCarGate() async {
-    await FirebaseFunctions.instance.httpsCallable('toggleCarGate').call();
+  @override
+  State<EwelinkButton> createState() => _EwelinkButtonState();
+}
+
+class _EwelinkButtonState extends State<EwelinkButton> {
+  late EwelinkButtonController controller;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    controller = Provider.of<EwelinkButtonController>(context, listen: true);
+    controller.init();
   }
 
-  void onPressed() async {
-    loading = false;
-    notifyListeners();
-
-    await toggleCarGate();
-    loading = false;
-    notifyListeners();
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: controller.loading ? null : controller.onPressed,
+      child: controller.loading
+          ? const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(),
+            )
+          : const Text('Acionar portão'),
+    );
   }
 }

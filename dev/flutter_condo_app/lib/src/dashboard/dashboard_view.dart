@@ -27,7 +27,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 
 import '../settings/settings_view.dart';
-import '../gate_button/gate_button.dart';
+import '../gate_button/ewelink_button.dart';
 
 /// Displays a list of SampleItems.
 class DashboardView extends StatefulWidget {
@@ -100,7 +100,7 @@ class _DashboardViewState extends State<DashboardView> {
                   height: 75,
                   child: const Padding(
                     padding: EdgeInsets.all(16.0),
-                    child: GateButton(),
+                    child: EwelinkButton(),
                   ),
                 ),
                 Expanded(
@@ -110,7 +110,11 @@ class _DashboardViewState extends State<DashboardView> {
                       // Access the User instance
                       Camera camera = querySnapshot.docs[index].data;
                       VlcPlayerController controller =
-                          VlcPlayerController.network(camera.url);
+                          VlcPlayerController.network(
+                        camera.url,
+                        autoInitialize: true,
+                        autoPlay: true,
+                      );
                       _vlcControllers.add(controller);
 
                       return Column(
