@@ -263,10 +263,10 @@ packages:
   dart_ewelink_api:
     dependency: "direct main"
     description:
-      path: "../../../dart_ewelink_api"
-      relative: true
-    source: path
-    version: "0.0.5"
+      name: dart_ewelink_api
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.3"
   dart_style:
     dependency: transitive
     description:
