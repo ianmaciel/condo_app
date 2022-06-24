@@ -130,23 +130,9 @@ class MyApp extends StatelessWidget {
                         ],
                       );
                     case BottomNavigationView.routeName:
+                    default:
                       protectedRoute = const BottomNavigationView();
                       break;
-                    case '/sign-in':
-                    default:
-                      protectedRoute = SignInScreen(
-                        showAuthActionSwitch: false,
-                        providerConfigs: _providerConfigs,
-                        actions: [
-                          AuthStateChangeAction<SignedIn>(
-                            (context, state) {
-                              Navigator.of(context).pushNamedAndRemoveUntil(
-                                  BottomNavigationView.routeName,
-                                  (Route<dynamic> route) => false);
-                            },
-                          ),
-                        ],
-                      );
                   }
                   return _ProtectedRoute(child: protectedRoute);
                 },
