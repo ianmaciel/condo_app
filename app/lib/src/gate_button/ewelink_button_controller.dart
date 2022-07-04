@@ -66,11 +66,13 @@ class EwelinkButtonController with ChangeNotifier {
     // Toogle device by its id
     try {
       // TODO change device id
-      await ewelinkApi!.toggleDevice(deviceId: '10000ffeb5');
+      await ewelinkApi!
+          .setDevicePowerState(deviceId: '10000ffeb5', state: 'on');
     } on EwelinkInvalidAccessToken {
       _ewelinkConfig!.auth = null;
       ewelinkApi = await getEwelinkApi(recreate: true);
-      await ewelinkApi!.toggleDevice(deviceId: '10000ffeb5');
+      await ewelinkApi!
+          .setDevicePowerState(deviceId: '10000ffeb5', state: 'on');
     }
   }
 

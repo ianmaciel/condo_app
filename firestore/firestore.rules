@@ -13,6 +13,9 @@ service cloud.firestore {
     function hasAccessToTheDocument() {
       return isAuthenticated() && resource.data.allowedUsers.hasAny([request.auth.uid])
     }
+    function hasDocumentToken() {
+      return isAuthenticated() && request.resource.data.token == resource.data.token
+    }
     function hasRole(role) {
       return hasAnyRole([role])
     }
@@ -62,6 +65,7 @@ service cloud.firestore {
       allow read: if hasAnyRole(['admin']) || isOwner(resource.data.owner);
       allow update: if hasRole('admin') || isOwner(resource.data.owner);
       allow read: if hasAccessToTheDocument();
+      allow read: if hasDocumentToken();
       allow create: if hasAnyRole(['admin', 'resident']);
     }
   }

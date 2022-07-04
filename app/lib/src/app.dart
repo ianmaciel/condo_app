@@ -20,7 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'package:condo_app/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,11 +28,14 @@ import 'package:flutterfire_ui/i10n.dart';
 import 'package:provider/provider.dart';
 
 import 'settings/settings_controller.dart';
-import 'settings/settings_view.dart';
-import 'bottom_navigation/bottom_navigation_view.dart';
+import 'settings/settings_page.dart';
+import 'bottom_navigation/protected_bottom_navigation.dart';
 import 'gate_button/ewelink_button_controller.dart';
 import 'bottom_navigation/bottom_navigation_controller.dart';
 import 'user/user_controller.dart';
+import 'configs/authentication_provider.dart';
+import 'guest/public_view.dart';
+import 'guest/guest_controller.dart';
 
 /// The Widget that configures your application.
 class MyApp extends StatelessWidget {
@@ -41,10 +43,12 @@ class MyApp extends StatelessWidget {
     Key? key,
     required this.settingsController,
     required this.userController,
+    required this.guestController,
   }) : super(key: key);
 
   final SettingsController settingsController;
   final UserController userController;
+  final GuestController guestController;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +64,10 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<EwelinkButtonController>(
           create: (_) => EwelinkButtonController(),
+          lazy: false,
+        ),
+        ChangeNotifierProvider<GuestController>(
+          create: (_) => guestController,
           lazy: false,
         ),
       ],
@@ -112,29 +120,39 @@ class MyApp extends StatelessWidget {
             // Flutter web url navigation and deep linking.
             onGenerateRoute: (RouteSettings routeSettings) {
               Widget? protectedRoute;
+
               return MaterialPageRoute<void>(
                 settings: routeSettings,
                 builder: (BuildContext context) {
-                  switch (routeSettings.name) {
-                    case SettingsView.routeName:
+                  final String? route = routeSettings.name?.split('?').first;
+
+                  switch (route) {
+                    case SettingsPage.routeName:
                       protectedRoute =
-                          SettingsView(controller: settingsController);
+                          SettingsPage(controller: settingsController);
                       break;
                     case '/profile':
-                      return ProfileScreen(
-                        providerConfigs: _providerConfigs,
-                        actions: [
-                          SignedOutAction((context) {
-                            Navigator.pushReplacementNamed(context, '/sign-in');
-                          }),
-                        ],
+                      ProtectedBottomNavigation(
+                        child: ProfileScreen(
+                          providerConfigs: providerConfigs,
+                          actions: [
+                            SignedOutAction((context) {
+                              Navigator.pushReplacementNamed(
+                                  context, '/sign-in');
+                            }),
+                          ],
+                        ),
                       );
-                    case BottomNavigationView.routeName:
-                    default:
-                      protectedRoute = const BottomNavigationView();
                       break;
+                    case PublicView.routeName:
+                      guestController
+                          .loadKeyByUrlParameters(routeSettings.name!);
+                      return const PublicView();
+                    case ProtectedBottomNavigation.routeName:
+                    default:
+                      return const ProtectedBottomNavigation();
                   }
-                  return _ProtectedRoute(child: protectedRoute);
+                  return ProtectedBottomNavigation(child: protectedRoute);
                 },
               );
             },
@@ -143,39 +161,4 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-}
-
-const _providerConfigs = [GoogleProviderConfiguration(clientId: oAuthClientId)];
-
-class _ProtectedRoute extends StatelessWidget {
-  const _ProtectedRoute({required this.child, Key? key}) : super(key: key);
-  final Widget? child;
-
-  @override
-  Widget build(BuildContext context) => StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        initialData: FirebaseAuth.instance.currentUser,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          if (!snapshot.hasData) {
-            return SignInScreen(
-              showAuthActionSwitch: false,
-              providerConfigs: _providerConfigs,
-              actions: [
-                AuthStateChangeAction<SignedIn>((context, state) {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      BottomNavigationView.routeName,
-                      (Route<dynamic> route) => false);
-                }),
-              ],
-            );
-          }
-          return child ?? const Center(child: Text('Página desconhecida'));
-        },
-      );
 }

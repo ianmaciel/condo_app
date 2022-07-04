@@ -23,46 +23,57 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../user/user_controller.dart';
 import '../bottom_navigation/bottom_navigation_controller.dart';
-import 'create_key_view.dart';
-import 'virtual_key_list_view.dart';
+import 'guest_content.dart';
+import 'guest_error_view.dart';
+import 'guest_controller.dart';
 
-class VirtualKeyView extends StatelessWidget implements PageModel {
-  const VirtualKeyView({
-    Key? key,
-  }) : super(key: key);
+class GuestPage extends StatelessWidget implements PageModel {
+  const GuestPage({Key? key}) : super(key: key);
 
-  @override
-  final String routeName = '/virtual_key';
   // TODO: translate
   @override
-  final String routeTitle = 'Chave Virtual';
+  final String routeTitle = 'Convidado';
   @override
   final BottomNavigationBarItem navigationButton =
       const BottomNavigationBarItem(
-    icon: Icon(Icons.key),
+    icon: Icon(Icons.person),
     // TODO: translate
-    label: 'Chave Virtual',
+    label: 'Convidado',
   );
 
   @override
-  Widget build(BuildContext context) => const VirtualKeyListView();
+  Widget? getFloatingButton(BuildContext context) => null;
 
   @override
-  Widget? getFloatingButton(BuildContext context) => Consumer<UserController>(
-        builder: (context, userController, child) {
-          if (userController.isAdmin || userController.isResident) {
-            return FloatingActionButton(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (BuildContext context) => const CreateKeyView(),
-                ),
-              ),
-              child: const Icon(Icons.add),
-            );
+  Widget build(BuildContext context) => Consumer<GuestController>(
+        builder: (context, controller, child) {
+          if (controller.hasError) {
+            return GuestErrorView(controller.error);
           }
-          return Container();
+          if (controller.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return controller.hasVirtualKey
+              ? Center(child: GuestContent(controller.virtualKey!))
+              : const Center(child: _GuestEmptyState());
         },
+      );
+}
+
+class _GuestEmptyState extends StatelessWidget {
+  const _GuestEmptyState({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          Icon(Icons.subject),
+          SizedBox(height: 16),
+          Text(
+            'Você ainda não tem nenhuma chave.',
+            textAlign: TextAlign.center,
+          ),
+        ],
       );
 }

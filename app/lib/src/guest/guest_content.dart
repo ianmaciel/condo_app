@@ -20,41 +20,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'package:condo_app/src/gate_button/ewelink_button_controller.dart';
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
+import '../virtual_key/virtual_key_model.dart';
 
-class EwelinkButton extends StatefulWidget {
-  const EwelinkButton({Key? key}) : super(key: key);
-
-  @override
-  State<EwelinkButton> createState() => _EwelinkButtonState();
-}
-
-class _EwelinkButtonState extends State<EwelinkButton> {
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    EwelinkButtonController controller =
-        Provider.of<EwelinkButtonController>(context, listen: false);
-    controller.init();
-  }
+class GuestContent extends StatelessWidget {
+  const GuestContent(
+    this.guestKey, {
+    Key? key,
+  }) : super(key: key);
+  final VirtualKey guestKey;
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<EwelinkButtonController>(
-        builder: (context, controller, child) {
-      return ElevatedButton(
-        onPressed: controller.loading ? null : controller.onPressed,
-        child: controller.loading
-            ? const Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: CircularProgressIndicator(),
-              )
-            // TODO: translate
-            : const Text('Acionar portão'),
+  Widget build(BuildContext context) => Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // TODO: translate
+          Text('${guestKey.owner} compartilhou com você uma chave!'),
+          const SizedBox(height: 16),
+          const Text('Leia com o QR Code do portão para abrir:'),
+          const ElevatedButton(
+            onPressed: null,
+            child: Text('Abrir leitor de QR Code'),
+          )
+        ],
       );
-    });
-  }
 }

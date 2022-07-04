@@ -20,22 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutterfire_ui/auth.dart';
 
-import '../bottom_navigation/condo_app_user_model.dart';
+import 'firebase_options.dart';
 
-class UserController with ChangeNotifier {
-  bool isLoading = true;
-  CondoAppUser? user;
-
-  Future<void> loadUserController() async {
-    user = await CondoAppUser.fromFirebaseUser();
-    isLoading = false;
-    notifyListeners();
-  }
-
-  bool get isAdmin => user?.isAdmin() ?? false;
-  bool get isResident => user?.isResident() ?? false;
-  bool get isGuest => user?.isGuest() ?? true;
-  String? get uid => user?.firebaseUser?.uid;
-}
+const List<ProviderConfiguration> providerConfigs = [
+  GoogleProviderConfiguration(clientId: oAuthClientId)
+];

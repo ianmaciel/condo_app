@@ -33,7 +33,7 @@
       ]
     },
     {
-      "collectionGroup": "keys",
+      "collectionGroup": "virtualKeys",
       "queryScope": "COLLECTION",
       "fields": [
         {

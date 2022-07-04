@@ -22,29 +22,12 @@
 
 import 'package:flutter/material.dart';
 
-import '../bottom_navigation/bottom_navigation_controller.dart';
-
-class GuestAccess extends StatelessWidget implements PageModel {
-  const GuestAccess({Key? key}) : super(key: key);
+class GuestErrorView extends StatelessWidget {
+  const GuestErrorView(this.error, {Key? key}) : super(key: key);
+  final String error;
 
   @override
-  Widget build(BuildContext context) => const Center(
-        child: Text('Funcionalidade em construção'),
+  Widget build(BuildContext context) => Center(
+        child: Text(error),
       );
-
-  @override
-  final String routeName = '/guest';
-  // TODO: translate
-  @override
-  final String routeTitle = 'Convidado';
-  @override
-  final BottomNavigationBarItem navigationButton =
-      const BottomNavigationBarItem(
-    icon: Icon(Icons.person),
-    // TODO: translate
-    label: 'Convidado',
-  );
-
-  @override
-  Widget? getFloatingButton(BuildContext context) => null;
 }

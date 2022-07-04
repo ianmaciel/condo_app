@@ -26,7 +26,8 @@ class VlcPlayer extends StatelessWidget {
 
       /// Specify whether Virtual displays or Hybrid composition is used on Android.
       /// iOS only uses Hybrid composition.
-      this.virtualDisplay = true});
+      this.virtualDisplay = true})
+      : super(key: key);
 
   final VlcPlayerController controller;
   final double aspectRatio;

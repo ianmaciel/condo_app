@@ -24,11 +24,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'condo_app_user_model.dart';
-import '../dashboard/dashboard_view.dart';
+import '../dashboard/dashboard_page.dart';
 import '../virtual_key/virtual_key_view.dart';
-import '../about/about_view.dart';
+import '../about/about_page.dart';
 import '../user/user_controller.dart';
-import '../guest_access/guest_access_view.dart';
+import '../guest/guest_page.dart';
 
 class BottomNavigationController with ChangeNotifier {
   final UserController userController;
@@ -36,26 +36,29 @@ class BottomNavigationController with ChangeNotifier {
   int get selectedIndex => _selectedIndex;
   BottomNavigationController(this.userController);
 
-  CondoAppUser? user;
+  CondoAppUser? get user => userController.user;
   bool isLoading = true;
+  bool get isGuest => user?.isGuest() ?? true;
+  List<PageModel> get views => isGuest ? guestViews : residentViews;
 
-  init() async {
+  init({Widget? initialPage}) async {
     await userController.loadUserController();
+    isLoading = false;
 
-    if (userController.user == null) {
-      isLoading = false;
-      notifyListeners();
-      return;
+    if (initialPage != null) {
+      _selectedIndex = findPageIndex(initialPage, views);
     }
-    user = userController.user;
-    isLoading = false;
-    if (user!.isAdmin() || user!.isResident()) {
-      views.insert(0, const DashboardView());
-    } else {
-      views.insert(0, const GuestAccess());
-    }
-    isLoading = false;
     notifyListeners();
+  }
+
+  int findPageIndex(Widget widget, List<PageModel> listOfWidgets) {
+    if (widget is! PageModel) {
+      return _selectedIndex;
+    }
+    PageModel page = widget as PageModel;
+    int fondIndex = listOfWidgets
+        .indexWhere((element) => element.routeTitle == page.routeTitle);
+    return fondIndex < 0 ? _selectedIndex : fondIndex;
   }
 
   void onItemTapped(int index) {
@@ -63,17 +66,25 @@ class BottomNavigationController with ChangeNotifier {
     notifyListeners();
   }
 
-  final List<PageModel> views = [
+  final List<PageModel> guestViews = [
+    const GuestPage(),
+    const AboutPage(),
+  ];
+
+  final List<PageModel> residentViews = [
+    const DashboardPage(),
     if (kDebugMode) const VirtualKeyView(),
-    const About(),
+    const AboutPage(),
   ];
 
   List<BottomNavigationBarItem> getItems() => views
       .map<BottomNavigationBarItem>((PageModel page) => page.navigationButton)
       .toList();
+
   Widget getCurrentView() => isLoading
       ? const Center(child: CircularProgressIndicator.adaptive())
       : views[_selectedIndex] as Widget;
+
   Text get currentTitle =>
       isLoading ? const Text('') : Text(views[_selectedIndex].routeTitle);
   Widget get currentWidget =>
@@ -84,11 +95,9 @@ class BottomNavigationController with ChangeNotifier {
 }
 
 class PageModel {
-  final String routeName;
   final String routeTitle;
   final BottomNavigationBarItem navigationButton;
   PageModel({
-    required this.routeName,
     required this.routeTitle,
     required this.navigationButton,
   });

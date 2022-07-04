@@ -28,14 +28,12 @@ import 'package:url_launcher/url_launcher.dart';
 import '../bottom_navigation/bottom_navigation_controller.dart';
 import '../privacy_policy/privacy_policy_view.dart';
 
-class About extends StatefulWidget implements PageModel {
-  const About({Key? key}) : super(key: key);
+class AboutPage extends StatefulWidget implements PageModel {
+  const AboutPage({Key? key}) : super(key: key);
 
   @override
-  State<About> createState() => _AboutState();
+  State<AboutPage> createState() => _AboutPageState();
 
-  @override
-  final String routeName = '/about';
   // TODO: translate
   @override
   final String routeTitle = 'Sobre';
@@ -51,7 +49,7 @@ class About extends StatefulWidget implements PageModel {
   Widget? getFloatingButton(BuildContext context) => null;
 }
 
-class _AboutState extends State<About> {
+class _AboutPageState extends State<AboutPage> {
   PackageInfo? packageInfo;
   final String authorEmail = 'ianmaciel@gmail.com';
 

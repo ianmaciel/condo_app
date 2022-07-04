@@ -45,6 +45,7 @@ class CondoAppUser {
   User? firebaseUser;
   bool isAdmin() => roles?.any((element) => element == 'admin') ?? false;
   bool isResident() => roles?.any((element) => element == 'resident') ?? false;
+  bool isGuest() => !isAdmin() && !isResident();
 
   static Future<CondoAppUser?> fromFirebaseUser() async {
     if (FirebaseAuth.instance.currentUser == null) {
@@ -53,6 +54,11 @@ class CondoAppUser {
     CondoAppUserDocumentSnapshot documentSnapshot = await condoAppUsersRef
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get();
+
+    if (documentSnapshot.data == null) {
+      return null;
+    }
+
     CondoAppUser condoUser = documentSnapshot.data!;
     condoUser.firebaseUser = FirebaseAuth.instance.currentUser;
     return condoUser;

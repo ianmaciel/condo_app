@@ -26,17 +26,14 @@ import 'package:flutter/material.dart';
 
 import 'camera_listview.dart';
 import '../bottom_navigation/bottom_navigation_controller.dart';
-import '../settings/settings_view.dart';
 import '../camera/camera_model.dart';
 
 /// Displays a list of SampleItems.
-class DashboardView extends StatelessWidget implements PageModel {
-  const DashboardView({
+class DashboardPage extends StatelessWidget implements PageModel {
+  const DashboardPage({
     Key? key,
   }) : super(key: key);
 
-  @override
-  final String routeName = '/dashboard';
   // TODO: translate
   @override
   final String routeTitle = 'Painel';
