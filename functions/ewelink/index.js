@@ -2,7 +2,6 @@ const Ewelink = require("ewelink-api");
 const admin = require("firebase-admin");
 const ewelinkDoc = "/configs/ewelinkConnection";
 const carGateDoc = "/sonoffDevices/carGate";
-admin.initializeApp();
 const db = admin.firestore();
 
 /**
@@ -30,7 +29,67 @@ async function getDevices(data, context) {
 }
 
 /**
- * Start the login with eewlink
+ * Check if user has a specific role.
+ * @param {object} roles user roles array.
+ * @param {object} requiredRole the roles to look for in array.
+ * @return {object} true if has the required role.
+ */
+function hasRole(roles, requiredRole) {
+  return (roles.indexOf(requiredRole) > -1);
+}
+
+
+/**
+ * Check if user has admin role.
+ * @param {object} roles user roles array.
+ * @return {object} true if is admin.
+ */
+function isAdmin(roles) {
+  return hasRole(roles, "admin");
+}
+
+/**
+ * Check if user has resident role.
+ * @param {object} roles user roles array.
+ * @return {object} true if is resident.
+ */
+function isResident(roles) {
+  return hasRole(roles, "resident");
+}
+
+/**
+ * Check if user is guest.
+ * @param {object} roles user roles array.
+ * @return {object} true if is guest.
+ */
+function isGuest(roles) {
+  return !isAdmin(roles) && !isResident(roles);
+}
+
+/**
+ * Toggle car gate
+ */
+async function secureToggleCarGate() {
+  const carGateSnapshot = await db.doc(carGateDoc).get();
+  const ewelink = await init();
+
+  return await ewelink.toggleDevice(carGateSnapshot.data().deviceid);
+}
+
+/**
+ * Set device power state
+ * @param {string} state (on/off) status status to set.
+ */
+async function secureSetDevicePowerState(state="on") {
+  const carGateSnapshot = await db.doc(carGateDoc).get();
+  const ewelink = await init();
+
+  return await ewelink.setDevicePowerState(carGateSnapshot.data().deviceid,
+      state);
+}
+
+/**
+ * Start the login with ewelink
  * @param {object} data user-provided data.
  * @param {object} context automagic context.
  */
@@ -43,11 +102,17 @@ async function toggleCarGate(data, context) {
     };
   }
 
-  const carGateSnapshot = await db.doc(carGateDoc).get();
-  const ewelink = await init();
+  const user = (await db.doc(`/users/${context.auth.uid}`).get()).data();
+  if (!isGuest(user.roles)) {
+    return {
+      status: "error",
+      code: 403,
+      message: "Not signed in",
+    };
+  }
 
-  const ewelinkResponse = await ewelink.toggleDevice(
-      carGateSnapshot.data().deviceid);
+  const ewelinkResponse = await secureToggleCarGate();
+
   return {
     status: "ok",
     code: 200,
@@ -69,11 +134,17 @@ async function setCarGateStateOn(data, context) {
     };
   }
 
-  const carGateSnapshot = await db.doc(carGateDoc).get();
-  const ewelink = await init();
+  const user = (await db.doc(`/users/${context.auth.uid}`).get()).data();
+  if (!isGuest(user.roles)) {
+    return {
+      status: "error",
+      code: 403,
+      message: "Not signed in",
+    };
+  }
 
-  const ewelinkResponse = await ewelink.setDevicePowerState(
-      carGateSnapshot.data().deviceid, "on");
+  const ewelinkResponse = await secureSetDevicePowerState("on");
+
   return {
     status: "ok",
     code: 200,
@@ -173,5 +244,7 @@ module.exports = {
   getDevices,
   getRegion,
   toggleCarGate,
+  secureToggleCarGate,
   setCarGateStateOn,
+  secureSetDevicePowerState,
 };
