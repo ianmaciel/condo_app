@@ -1,3 +1,9 @@
+## 1.3.0
+* Make settings persistent
+
+## 1.2.4
+* Create a public view
+
 ## 1.2.3
 * Include form to create virtual keys
 * Make login persistent on web
