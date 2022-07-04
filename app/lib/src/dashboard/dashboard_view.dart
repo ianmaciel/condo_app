@@ -71,7 +71,12 @@ class DashboardView extends StatelessWidget implements PageModel {
                 ),
               );
             }
-            return const Text('Something went wrong!');
+            return Center(
+              child:
+                  // TODO: translate
+                  SelectableText(
+                      'Erro inesperado!\n\n${snapshot.error.toString()}'),
+            );
           }
           if (!snapshot.hasData) {
             return const Center(

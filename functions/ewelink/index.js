@@ -38,7 +38,7 @@ async function toggleCarGate(data, context) {
   if (!context.auth) {
     return {
       status: "error",
-      code: 401,
+      code: 403,
       message: "Not signed in",
     };
   }
@@ -48,6 +48,32 @@ async function toggleCarGate(data, context) {
 
   const ewelinkResponse = await ewelink.toggleDevice(
       carGateSnapshot.data().deviceid);
+  return {
+    status: "ok",
+    code: 200,
+    message: ewelinkResponse,
+  };
+}
+
+/**
+ * Start the login with ewelink
+ * @param {object} data user-provided data.
+ * @param {object} context automagic context.
+ */
+async function setCarGateStateOn(data, context) {
+  if (!context.auth) {
+    return {
+      status: "error",
+      code: 403,
+      message: "Not signed in",
+    };
+  }
+
+  const carGateSnapshot = await db.doc(carGateDoc).get();
+  const ewelink = await init();
+
+  const ewelinkResponse = await ewelink.setDevicePowerState(
+      carGateSnapshot.data().deviceid, "on");
   return {
     status: "ok",
     code: 200,
@@ -147,4 +173,5 @@ module.exports = {
   getDevices,
   getRegion,
   toggleCarGate,
+  setCarGateStateOn,
 };
