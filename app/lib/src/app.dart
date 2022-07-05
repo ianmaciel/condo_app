@@ -128,9 +128,7 @@ class MyApp extends StatelessWidget {
 
                   switch (route) {
                     case SettingsPage.routeName:
-                      protectedRoute =
-                          SettingsPage(controller: settingsController);
-                      break;
+                      return SettingsPage(controller: settingsController);
                     case '/profile':
                       ProtectedBottomNavigation(
                         child: ProfileScreen(

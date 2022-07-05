@@ -44,6 +44,6 @@ class SettingsService {
   Future<void> updateThemeMode(ThemeMode theme) async {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
-    await sharedPreferences.setString('theme', ThemeMode.system.toString());
+    await sharedPreferences.setString('theme', theme.toString());
   }
 }
