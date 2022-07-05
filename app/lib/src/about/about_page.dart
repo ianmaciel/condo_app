@@ -67,12 +67,22 @@ class _AboutPageState extends State<AboutPage> {
   @override
   Widget build(BuildContext context) => ListView(
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(
+          DrawerHeader(
+            decoration: const BoxDecoration(
               color: Colors.blue,
+              image: DecorationImage(
+                image: AssetImage('assets/images/about_banner.png'),
+                fit: BoxFit.cover,
+              ),
             ),
             // TODO: translate
-            child: Text('Porto Novo'),
+            child: Text(
+              'Porto Novo',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6!
+                  .merge(const TextStyle(color: Colors.white)),
+            ),
           ),
           ListTile(
             // TODO: translate
