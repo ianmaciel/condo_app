@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterfire_ui/auth.dart';
@@ -79,65 +80,70 @@ class MyApp extends StatelessWidget {
       child: AnimatedBuilder(
         animation: settingsController,
         builder: (BuildContext context, Widget? child) {
-          return MaterialApp(
-            // Providing a restorationScopeId allows the Navigator built by the
-            // MaterialApp to restore the navigation stack when a user leaves and
-            // returns to the app after it has been killed while running in the
-            // background.
-            restorationScopeId: 'condo_app',
-
-            // Provide the generated AppLocalizations to the MaterialApp. This
-            // allows descendant Widgets to display the correct translations
-            // depending on the user's locale.
-            localizationsDelegates: [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-              FlutterFireUILocalizations.delegate,
-            ],
-            supportedLocales: const [
-              Locale('pt', 'BR'),
-              Locale('en', ''), // English, no country code
-            ],
-
-            // Use AppLocalizations to configure the correct application title
-            // depending on the user's locale.
-            //
-            // The appTitle is defined in .arb files found in the localization
-            // directory.
-            onGenerateTitle: (BuildContext context) =>
-                AppLocalizations.of(context)!.appTitle,
-
-            // Define a light and dark color theme. Then, read the user's
-            // preferred ThemeMode (light, dark, or system default) from the
-            // SettingsController to display the correct theme.
-            theme: ThemeData(),
-            darkTheme: ThemeData.dark(),
-            themeMode: settingsController.themeMode,
-
-            // Define a function to handle named routes in order to support
-            // Flutter web url navigation and deep linking.
-            onGenerateRoute: (RouteSettings routeSettings) {
-              return MaterialPageRoute<void>(
-                settings: routeSettings,
-                builder: (BuildContext context) {
-                  final String? route = routeSettings.name?.split('?').first;
-
-                  switch (route) {
-                    case SettingsPage.routeName:
-                      return SettingsPage(controller: settingsController);
-                    case PublicView.routeName:
-                      guestController
-                          .loadKeyByUrlParameters(routeSettings.name!);
-                      return const PublicView();
-                    case ProtectedBottomNavigation.routeName:
-                    default:
-                      return const ProtectedBottomNavigation();
-                  }
-                },
-              );
+          return Shortcuts(
+            shortcuts: <LogicalKeySet, Intent>{
+              LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
             },
+            child: MaterialApp(
+              // Providing a restorationScopeId allows the Navigator built by the
+              // MaterialApp to restore the navigation stack when a user leaves and
+              // returns to the app after it has been killed while running in the
+              // background.
+              restorationScopeId: 'condo_app',
+
+              // Provide the generated AppLocalizations to the MaterialApp. This
+              // allows descendant Widgets to display the correct translations
+              // depending on the user's locale.
+              localizationsDelegates: [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+                FlutterFireUILocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('pt', 'BR'),
+                Locale('en', ''), // English, no country code
+              ],
+
+              // Use AppLocalizations to configure the correct application title
+              // depending on the user's locale.
+              //
+              // The appTitle is defined in .arb files found in the localization
+              // directory.
+              onGenerateTitle: (BuildContext context) =>
+                  AppLocalizations.of(context)!.appTitle,
+
+              // Define a light and dark color theme. Then, read the user's
+              // preferred ThemeMode (light, dark, or system default) from the
+              // SettingsController to display the correct theme.
+              theme: ThemeData(),
+              darkTheme: ThemeData.dark(),
+              themeMode: settingsController.themeMode,
+
+              // Define a function to handle named routes in order to support
+              // Flutter web url navigation and deep linking.
+              onGenerateRoute: (RouteSettings routeSettings) {
+                return MaterialPageRoute<void>(
+                  settings: routeSettings,
+                  builder: (BuildContext context) {
+                    final String? route = routeSettings.name?.split('?').first;
+
+                    switch (route) {
+                      case SettingsPage.routeName:
+                        return SettingsPage(controller: settingsController);
+                      case PublicView.routeName:
+                        guestController
+                            .loadKeyByUrlParameters(routeSettings.name!);
+                        return const PublicView();
+                      case ProtectedBottomNavigation.routeName:
+                      default:
+                        return const ProtectedBottomNavigation();
+                    }
+                  },
+                );
+              },
+            ),
           );
         },
       ),
