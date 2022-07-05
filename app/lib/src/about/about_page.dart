@@ -22,6 +22,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterfire_ui/auth.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -79,7 +80,16 @@ class _AboutPageState extends State<AboutPage> {
           ),
           ListTile(
             // TODO: translate
-            title: Text('Licenças de código aberto'),
+            title: const Text('Perfil do Usuário'),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (BuildContext context) => const ProfileScreen(),
+              ),
+            ),
+          ),
+          ListTile(
+            // TODO: translate
+            title: const Text('Licenças de código aberto'),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (BuildContext context) => LicensePage(
@@ -91,7 +101,7 @@ class _AboutPageState extends State<AboutPage> {
           ),
           ListTile(
             // TODO: translate
-            title: Text('Política de Privacidade'),
+            title: const Text('Política de Privacidade'),
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (BuildContext context) => const PrivacyPolicyView(),
@@ -100,7 +110,7 @@ class _AboutPageState extends State<AboutPage> {
           ),
           ListTile(
             // TODO: translate
-            title: Text('Sair (Logout)'),
+            title: const Text('Sair (Logout)'),
             onTap: _logout,
           ),
           const Divider(),
@@ -117,12 +127,9 @@ class _AboutPageState extends State<AboutPage> {
       );
 
   void _logout() async {
-    await FirebaseAuth.instance.signOut();
-
-    if (!mounted) {
-      return;
-    }
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil('/sign-in', (Route<dynamic> route) => false);
+    await FlutterFireUIAuth.signOut(
+      context: context,
+      auth: FirebaseAuth.instance,
+    );
   }
 }

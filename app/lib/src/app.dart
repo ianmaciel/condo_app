@@ -119,8 +119,6 @@ class MyApp extends StatelessWidget {
             // Define a function to handle named routes in order to support
             // Flutter web url navigation and deep linking.
             onGenerateRoute: (RouteSettings routeSettings) {
-              Widget? protectedRoute;
-
               return MaterialPageRoute<void>(
                 settings: routeSettings,
                 builder: (BuildContext context) {
@@ -129,19 +127,6 @@ class MyApp extends StatelessWidget {
                   switch (route) {
                     case SettingsPage.routeName:
                       return SettingsPage(controller: settingsController);
-                    case '/profile':
-                      ProtectedBottomNavigation(
-                        child: ProfileScreen(
-                          providerConfigs: providerConfigs,
-                          actions: [
-                            SignedOutAction((context) {
-                              Navigator.pushReplacementNamed(
-                                  context, '/sign-in');
-                            }),
-                          ],
-                        ),
-                      );
-                      break;
                     case PublicView.routeName:
                       guestController
                           .loadKeyByUrlParameters(routeSettings.name!);
@@ -150,7 +135,6 @@ class MyApp extends StatelessWidget {
                     default:
                       return const ProtectedBottomNavigation();
                   }
-                  return ProtectedBottomNavigation(child: protectedRoute);
                 },
               );
             },
