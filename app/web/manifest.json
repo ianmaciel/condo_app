@@ -1,6 +1,6 @@
 {
-    "name": "condo_app",
-    "short_name": "condo_app",
+    "name": "Porto Novo",
+    "short_name": "Porto Novo",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
