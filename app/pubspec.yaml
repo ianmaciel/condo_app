@@ -4,7 +4,7 @@ description: A flutter app to view cameras and manage condominium access.
 # Prevent accidental publishing to pub.dev.
 publish_to: 'none'
 
-version: 1.4.1+13
+version: 1.4.2+14
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
@@ -31,6 +31,7 @@ dependencies:
   forme: ^4.1.3+1
   forme_base_fields: ^2.2.1
   shared_preferences: ^2.0.15
+  slidable_button: ^2.0.0+1
 
 dev_dependencies:
   flutter_test:

@@ -40,7 +40,6 @@ class CameraListView extends StatelessWidget {
           children: [
             Container(
               color: Colors.blueGrey,
-              height: 70,
               child: const Padding(
                 padding: EdgeInsets.all(8.0),
                 child: EwelinkButton(),

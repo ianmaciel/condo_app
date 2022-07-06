@@ -1,3 +1,12 @@
+## 1.4.2
+* Use a slider instead of button to open the gate
+
+## 1.4.1
+* Add header on about page
+
+## 1.4.0
+* Compatible with Android TV
+
 ## 1.3.0
 * Make settings persistent
 

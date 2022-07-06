@@ -31,6 +31,7 @@ import 'ewelink_config_model.dart';
 class EwelinkButtonController with ChangeNotifier {
   bool _loading = true;
   bool get loading => _loading;
+  bool get isNotloading => !_loading;
   late EwelinkConfigModelDocumentReference documentReference;
   EwelinkConfigModel? _ewelinkConfig;
   Ewelink? ewelinkApi;
