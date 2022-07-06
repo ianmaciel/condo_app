@@ -52,52 +52,65 @@ class _ProtectedBottomNavigationState extends State<ProtectedBottomNavigation> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: controller.currentTitle,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () {
-                // Navigate to the settings page. If the user leaves and returns
-                // to the app after it has been killed while running in the
-                // background, the navigation stack is restored.
-                Navigator.restorablePushNamed(context, SettingsPage.routeName);
-              },
-            ),
-          ],
-        ),
-        bottomNavigationBar: FirebaseAuth.instance.currentUser == null
-            ? null
-            : const _BottomNavigationBar(),
-        body: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          initialData: FirebaseAuth.instance.currentUser,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+  Widget build(BuildContext context) => WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          appBar: AppBar(
+            title: controller.currentTitle,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.settings),
+                onPressed: () {
+                  // Navigate to the settings page. If the user leaves and returns
+                  // to the app after it has been killed while running in the
+                  // background, the navigation stack is restored.
+                  Navigator.restorablePushNamed(
+                      context, SettingsPage.routeName);
+                },
+              ),
+            ],
+          ),
+          bottomNavigationBar: FirebaseAuth.instance.currentUser == null
+              ? null
+              : const _BottomNavigationBar(),
+          body: StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            initialData: FirebaseAuth.instance.currentUser,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-            if (!snapshot.hasData) {
-              return SignInScreen(
-                showAuthActionSwitch: false,
-                providerConfigs: providerConfigs,
-                actions: [
-                  AuthStateChangeAction<SignedIn>((context, state) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        ProtectedBottomNavigation.routeName,
-                        (Route<dynamic> route) => false);
-                  }),
-                ],
-              );
-            }
-            return const _Body();
-          },
+              if (!snapshot.hasData) {
+                return SignInScreen(
+                  showAuthActionSwitch: false,
+                  providerConfigs: providerConfigs,
+                  actions: [
+                    AuthStateChangeAction<SignedIn>((context, state) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          ProtectedBottomNavigation.routeName,
+                          (Route<dynamic> route) => false);
+                    }),
+                  ],
+                );
+              }
+              return const _Body();
+            },
+          ),
+          floatingActionButton: const _FloatingButton(),
         ),
-        floatingActionButton: const _FloatingButton(),
       );
+
+  Future<bool> _onWillPop() {
+    if (controller.selectedIndex == 0) {
+      return Future.value(true);
+    }
+
+    controller.onItemTapped(0);
+    return Future.value(false);
+  }
 }
 
 class _BottomNavigationBar extends StatelessWidget {

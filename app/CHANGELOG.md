@@ -1,3 +1,6 @@
+## 1.4.3
+* Exit app only on the main screen
+
 ## 1.4.2
 * Use a slider instead of button to open the gate
 
