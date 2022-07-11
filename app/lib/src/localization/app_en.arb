@@ -2,5 +2,21 @@
   "appTitle": "Porto Novo",
   "@appTitle": {
     "description": "The title of the application"
+  },
+  "aboutPageTitle": "About",
+  "@aboutPageTitle": {
+    "description": "The title of about page"
+  },
+  "dashboardPageTitle": "Dashboard",
+  "@dashboardPageTitle": {
+    "description": "The title of dashboard page"
+  },
+  "guestPageTitle": "Guest",
+  "@guestPageTitle": {
+    "description": "The title of guest page"
+  },
+  "virtualKeyPageTitle": "Virtual Key",
+  "@virtualKeyPageTitle": {
+    "description": "The title of virtual key page"
   }
 }

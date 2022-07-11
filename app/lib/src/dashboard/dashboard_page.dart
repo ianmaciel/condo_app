@@ -23,27 +23,25 @@
 import 'package:cloud_firestore_odm/cloud_firestore_odm.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'camera_listview.dart';
 import '../bottom_navigation/bottom_navigation_controller.dart';
 import '../camera/camera_model.dart';
 
 /// Displays a list of SampleItems.
-class DashboardPage extends StatelessWidget implements PageModel {
-  const DashboardPage({
-    Key? key,
-  }) : super(key: key);
+class DashboardPage extends PageModel {
+  const DashboardPage({Key? key}) : super(key: key);
 
-  // TODO: translate
   @override
-  final String routeTitle = 'Painel';
+  String getRouteTitle(BuildContext context) =>
+      AppLocalizations.of(context)!.dashboardPageTitle;
+
   @override
-  final BottomNavigationBarItem navigationButton =
-      const BottomNavigationBarItem(
-    icon: Icon(Icons.camera_alt),
-    // TODO: translate
-    label: 'Painel',
-  );
+  String get pageId => 'dashboardPage';
+
+  @override
+  IconData get icon => Icons.camera_alt;
 
   @override
   Widget build(BuildContext context) => FirestoreBuilder<CameraQuerySnapshot>(

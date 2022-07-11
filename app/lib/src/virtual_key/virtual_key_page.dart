@@ -22,29 +22,25 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../user/user_controller.dart';
 import '../bottom_navigation/bottom_navigation_controller.dart';
 import 'create_key_view.dart';
 import 'virtual_key_list_view.dart';
 
-class VirtualKeyView extends StatelessWidget implements PageModel {
-  const VirtualKeyView({
-    Key? key,
-  }) : super(key: key);
+class VirtualKeyPage extends PageModel {
+  const VirtualKeyPage({Key? key}) : super(key: key);
 
   @override
-  final String routeName = '/virtual_key';
-  // TODO: translate
+  String getRouteTitle(BuildContext context) =>
+      AppLocalizations.of(context)!.virtualKeyPageTitle;
+
   @override
-  final String routeTitle = 'Chave Virtual';
+  String get pageId => 'virtualKeyPage';
+
   @override
-  final BottomNavigationBarItem navigationButton =
-      const BottomNavigationBarItem(
-    icon: Icon(Icons.key),
-    // TODO: translate
-    label: 'Chave Virtual',
-  );
+  IconData get icon => Icons.key;
 
   @override
   Widget build(BuildContext context) => const VirtualKeyListView();

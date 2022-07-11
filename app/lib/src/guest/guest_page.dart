@@ -22,25 +22,25 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../bottom_navigation/bottom_navigation_controller.dart';
 import 'guest_content.dart';
 import 'guest_error_view.dart';
 import 'guest_controller.dart';
 
-class GuestPage extends StatelessWidget implements PageModel {
+class GuestPage extends PageModel {
   const GuestPage({Key? key}) : super(key: key);
 
-  // TODO: translate
   @override
-  final String routeTitle = 'Convidado';
+  String getRouteTitle(BuildContext context) =>
+      AppLocalizations.of(context)!.guestPageTitle;
+
   @override
-  final BottomNavigationBarItem navigationButton =
-      const BottomNavigationBarItem(
-    icon: Icon(Icons.person),
-    // TODO: translate
-    label: 'Convidado',
-  );
+  String get pageId => 'guestPage';
+
+  @override
+  IconData get icon => Icons.person;
 
   @override
   Widget? getFloatingButton(BuildContext context) => null;

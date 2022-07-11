@@ -22,6 +22,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../about/about_page.dart';
 import '../bottom_navigation/protected_bottom_navigation.dart';
@@ -83,7 +84,7 @@ class _About extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text(aboutView.routeTitle),
+          title: Text(AppLocalizations.of(context)!.aboutPageTitle),
         ),
         body: aboutView,
       );

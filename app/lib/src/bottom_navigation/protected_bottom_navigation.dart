@@ -56,7 +56,7 @@ class _ProtectedBottomNavigationState extends State<ProtectedBottomNavigation> {
         onWillPop: _onWillPop,
         child: Scaffold(
           appBar: AppBar(
-            title: controller.currentTitle,
+            title: controller.getCurrentTitle(context),
             actions: [
               IconButton(
                 icon: const Icon(Icons.settings),
@@ -122,7 +122,7 @@ class _BottomNavigationBar extends StatelessWidget {
           return BottomNavigationBar(
             currentIndex: controller.selectedIndex,
             onTap: controller.onItemTapped,
-            items: controller.getItems(),
+            items: controller.getItems(context),
           );
         },
       );

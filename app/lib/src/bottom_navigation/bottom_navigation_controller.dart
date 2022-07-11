@@ -25,7 +25,7 @@ import 'package:flutter/material.dart';
 
 import 'condo_app_user_model.dart';
 import '../dashboard/dashboard_page.dart';
-import '../virtual_key/virtual_key_view.dart';
+import '../virtual_key/virtual_key_page.dart';
 import '../about/about_page.dart';
 import '../user/user_controller.dart';
 import '../guest/guest_page.dart';
@@ -56,8 +56,8 @@ class BottomNavigationController with ChangeNotifier {
       return _selectedIndex;
     }
     PageModel page = widget as PageModel;
-    int fondIndex = listOfWidgets
-        .indexWhere((element) => element.routeTitle == page.routeTitle);
+    int fondIndex =
+        listOfWidgets.indexWhere((element) => element.pageId == page.pageId);
     return fondIndex < 0 ? _selectedIndex : fondIndex;
   }
 
@@ -73,20 +73,22 @@ class BottomNavigationController with ChangeNotifier {
 
   final List<PageModel> residentViews = [
     const DashboardPage(),
-    if (kDebugMode) const VirtualKeyView(),
+    if (kDebugMode) const VirtualKeyPage(),
     const AboutPage(),
   ];
 
-  List<BottomNavigationBarItem> getItems() => views
-      .map<BottomNavigationBarItem>((PageModel page) => page.navigationButton)
+  List<BottomNavigationBarItem> getItems(BuildContext context) => views
+      .map<BottomNavigationBarItem>(
+          (PageModel page) => page.buildNavigationButton(context))
       .toList();
 
   Widget getCurrentView() => isLoading
       ? const Center(child: CircularProgressIndicator.adaptive())
       : views[_selectedIndex] as Widget;
 
-  Text get currentTitle =>
-      isLoading ? const Text('') : Text(views[_selectedIndex].routeTitle);
+  Text getCurrentTitle(BuildContext context) => isLoading
+      ? const Text('')
+      : Text(views[_selectedIndex].getRouteTitle(context));
   Widget get currentWidget =>
       isLoading ? Container() : views[_selectedIndex] as Widget;
 
@@ -94,13 +96,18 @@ class BottomNavigationController with ChangeNotifier {
       isLoading ? null : views[_selectedIndex].getFloatingButton(context);
 }
 
-class PageModel {
-  final String routeTitle;
-  final BottomNavigationBarItem navigationButton;
-  PageModel({
-    required this.routeTitle,
-    required this.navigationButton,
-  });
+abstract class PageModel extends StatelessWidget {
+  const PageModel({Key? key}) : super(key: key);
+  String get pageId;
+  String getRouteTitle(BuildContext context);
 
-  Widget? getFloatingButton(BuildContext context) => null;
+  IconData get icon => Icons.abc;
+
+  BottomNavigationBarItem buildNavigationButton(BuildContext context) =>
+      BottomNavigationBarItem(
+        icon: Icon(icon),
+        label: getRouteTitle(context),
+      );
+
+  Widget? getFloatingButton(BuildContext context);
 }

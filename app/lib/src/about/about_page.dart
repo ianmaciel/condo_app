@@ -25,32 +25,39 @@ import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/auth.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../bottom_navigation/bottom_navigation_controller.dart';
 import '../privacy_policy/privacy_policy_view.dart';
 
-class AboutPage extends StatefulWidget implements PageModel {
+class AboutPage extends PageModel {
   const AboutPage({Key? key}) : super(key: key);
 
   @override
-  State<AboutPage> createState() => _AboutPageState();
+  String getRouteTitle(BuildContext context) =>
+      AppLocalizations.of(context)!.aboutPageTitle;
 
-  // TODO: translate
   @override
-  final String routeTitle = 'Sobre';
+  String get pageId => 'aboutPage';
+
   @override
-  final BottomNavigationBarItem navigationButton =
-      const BottomNavigationBarItem(
-    icon: Icon(Icons.help),
-    // TODO: translate
-    label: 'Sobre',
-  );
+  IconData get icon => Icons.help;
 
   @override
   Widget? getFloatingButton(BuildContext context) => null;
+
+  @override
+  Widget build(BuildContext context) => const _AboutContent();
 }
 
-class _AboutPageState extends State<AboutPage> {
+class _AboutContent extends StatefulWidget {
+  const _AboutContent({Key? key}) : super(key: key);
+
+  @override
+  State<_AboutContent> createState() => __AboutStateContent();
+}
+
+class __AboutStateContent extends State<_AboutContent> {
   PackageInfo? packageInfo;
   final String authorEmail = 'ianmaciel@gmail.com';
 
