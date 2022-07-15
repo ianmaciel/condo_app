@@ -35,8 +35,6 @@ void main() async {
   // Flutter Widgets.
   final SettingsController settingsController =
       SettingsController(SettingsService());
-  final UserController userController = UserController();
-  final GuestController guestController = GuestController();
 
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -47,6 +45,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  final UserController userController = UserController();
+  final GuestController guestController = GuestController();
 
   // Run the app and pass in the SettingsController. The app listens to the
   // SettingsController for changes, then passes it further down to the

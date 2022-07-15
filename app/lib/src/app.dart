@@ -23,18 +23,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutterfire_ui/auth.dart';
 import 'package:flutterfire_ui/i10n.dart';
 import 'package:provider/provider.dart';
 
 import 'settings/settings_controller.dart';
 import 'settings/settings_page.dart';
-import 'bottom_navigation/protected_bottom_navigation.dart';
+import 'bottom_navigation/bottom_navigation.dart';
+import 'user/protected_screen.dart';
 import 'gate_button/ewelink_button_controller.dart';
 import 'bottom_navigation/bottom_navigation_controller.dart';
 import 'user/user_controller.dart';
-import 'configs/authentication_provider.dart';
 import 'guest/public_view.dart';
 import 'guest/guest_controller.dart';
 
@@ -136,9 +134,11 @@ class MyApp extends StatelessWidget {
                         guestController
                             .loadKeyByUrlParameters(routeSettings.name!);
                         return const PublicView();
-                      case ProtectedBottomNavigation.routeName:
+                      case ProtectedScreen.routeName:
                       default:
-                        return const ProtectedBottomNavigation();
+                        return const ProtectedScreen(
+                          child: BottomNavigationView(),
+                        );
                     }
                   },
                 );

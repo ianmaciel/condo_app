@@ -20,27 +20,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterfire_ui/auth.dart';
 import 'package:provider/provider.dart';
 
-import '../configs/authentication_provider.dart';
 import '../settings/settings_page.dart';
 import '../bottom_navigation/bottom_navigation_controller.dart';
 
-class ProtectedBottomNavigation extends StatefulWidget {
-  const ProtectedBottomNavigation({this.child, Key? key}) : super(key: key);
+class BottomNavigationView extends StatefulWidget {
+  const BottomNavigationView({this.child, Key? key}) : super(key: key);
   final Widget? child;
 
-  static const routeName = '/';
-
   @override
-  State<ProtectedBottomNavigation> createState() =>
-      _ProtectedBottomNavigationState();
+  State<BottomNavigationView> createState() => _BottomNavigationViewState();
 }
 
-class _ProtectedBottomNavigationState extends State<ProtectedBottomNavigation> {
+class _BottomNavigationViewState extends State<BottomNavigationView> {
   late BottomNavigationController controller;
 
   @override
@@ -56,7 +50,7 @@ class _ProtectedBottomNavigationState extends State<ProtectedBottomNavigation> {
         onWillPop: _onWillPop,
         child: Scaffold(
           appBar: AppBar(
-            title: controller.getCurrentTitle(context),
+            title: const _AppBarTitle(),
             actions: [
               IconButton(
                 icon: const Icon(Icons.settings),
@@ -70,35 +64,8 @@ class _ProtectedBottomNavigationState extends State<ProtectedBottomNavigation> {
               ),
             ],
           ),
-          bottomNavigationBar: FirebaseAuth.instance.currentUser == null
-              ? null
-              : const _BottomNavigationBar(),
-          body: StreamBuilder<User?>(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            initialData: FirebaseAuth.instance.currentUser,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
-              if (!snapshot.hasData) {
-                return SignInScreen(
-                  showAuthActionSwitch: false,
-                  providerConfigs: providerConfigs,
-                  actions: [
-                    AuthStateChangeAction<SignedIn>((context, state) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          ProtectedBottomNavigation.routeName,
-                          (Route<dynamic> route) => false);
-                    }),
-                  ],
-                );
-              }
-              return const _Body();
-            },
-          ),
+          bottomNavigationBar: const _BottomNavigationBar(),
+          body: const _Body(),
           floatingActionButton: const _FloatingButton(),
         ),
       );
@@ -113,17 +80,30 @@ class _ProtectedBottomNavigationState extends State<ProtectedBottomNavigation> {
   }
 }
 
+class _AppBarTitle extends StatelessWidget {
+  const _AppBarTitle({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Consumer<BottomNavigationController>(
+        builder: (context, controller, child) {
+          return controller.getCurrentTitle(context);
+        },
+      );
+}
+
 class _BottomNavigationBar extends StatelessWidget {
   const _BottomNavigationBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Consumer<BottomNavigationController>(
         builder: (context, controller, child) {
-          return BottomNavigationBar(
-            currentIndex: controller.selectedIndex,
-            onTap: controller.onItemTapped,
-            items: controller.getItems(context),
-          );
+          return controller.isAuthenticated
+              ? BottomNavigationBar(
+                  currentIndex: controller.selectedIndex,
+                  onTap: controller.onItemTapped,
+                  items: controller.getItems(context),
+                )
+              : Container();
         },
       );
 }

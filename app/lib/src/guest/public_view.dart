@@ -25,7 +25,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../about/about_page.dart';
-import '../bottom_navigation/protected_bottom_navigation.dart';
+import '../user/protected_screen.dart';
 import 'guest_error_view.dart';
 import 'guest_content.dart';
 import 'guest_controller.dart';
@@ -97,8 +97,7 @@ class _LoginTip extends StatelessWidget {
   Widget build(BuildContext context) => InkWell(
         onTap: () => Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (BuildContext context) =>
-                const ProtectedBottomNavigation(),
+            builder: (BuildContext context) => const ProtectedScreen(),
           ),
         ),
         child: SizedBox(

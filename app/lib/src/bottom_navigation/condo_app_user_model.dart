@@ -45,7 +45,8 @@ class CondoAppUser {
   User? firebaseUser;
   bool isAdmin() => roles?.any((element) => element == 'admin') ?? false;
   bool isResident() => roles?.any((element) => element == 'resident') ?? false;
-  bool isGuest() => !isAdmin() && !isResident();
+  bool isGuest() => isAuthenticated() && !isAdmin() && !isResident();
+  bool isAuthenticated() => FirebaseAuth.instance.currentUser != null;
 
   static Future<CondoAppUser?> fromFirebaseUser() async {
     if (FirebaseAuth.instance.currentUser == null) {

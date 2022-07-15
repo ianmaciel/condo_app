@@ -20,22 +20,51 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../bottom_navigation/condo_app_user_model.dart';
 
 class UserController with ChangeNotifier {
+  final Completer<void> _completer = Completer<void>();
   bool isLoading = true;
   CondoAppUser? user;
-
-  Future<void> loadUserController() async {
-    user = await CondoAppUser.fromFirebaseUser();
-    isLoading = false;
-    notifyListeners();
-  }
+  Future<void> get initialization => _completer.future;
+  late StreamSubscription<User?> _firebaseAuthStreamSubscription;
 
   bool get isAdmin => user?.isAdmin() ?? false;
   bool get isResident => user?.isResident() ?? false;
   bool get isGuest => user?.isGuest() ?? true;
   String? get uid => user?.firebaseUser?.uid;
+
+  UserController() {
+    _firebaseAuthStreamSubscription =
+        FirebaseAuth.instance.authStateChanges().listen(_onFirebaseAuthData);
+  }
+
+  Future<void> loadUserController() async {
+    user = await CondoAppUser.fromFirebaseUser();
+    isLoading = false;
+    if (!_completer.isCompleted) {
+      _completer.complete();
+    }
+    notifyListeners();
+  }
+
+  void _onFirebaseAuthData(User? user) {
+    isLoading = true;
+    notifyListeners();
+
+    if (user != null) {
+      loadUserController();
+    }
+  }
+
+  @override
+  void dispose() {
+    _firebaseAuthStreamSubscription.cancel();
+    super.dispose();
+  }
 }

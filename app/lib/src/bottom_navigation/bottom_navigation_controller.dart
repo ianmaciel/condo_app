@@ -39,10 +39,11 @@ class BottomNavigationController with ChangeNotifier {
   CondoAppUser? get user => userController.user;
   bool isLoading = true;
   bool get isGuest => user?.isGuest() ?? true;
+  bool get isAuthenticated => user?.isAuthenticated() ?? false;
   List<PageModel> get views => isGuest ? guestViews : residentViews;
 
   init({Widget? initialPage}) async {
-    await userController.loadUserController();
+    await userController.initialization;
     isLoading = false;
 
     if (initialPage != null) {
@@ -55,7 +56,7 @@ class BottomNavigationController with ChangeNotifier {
     if (widget is! PageModel) {
       return _selectedIndex;
     }
-    PageModel page = widget as PageModel;
+    PageModel page = widget;
     int fondIndex =
         listOfWidgets.indexWhere((element) => element.pageId == page.pageId);
     return fondIndex < 0 ? _selectedIndex : fondIndex;
@@ -84,13 +85,12 @@ class BottomNavigationController with ChangeNotifier {
 
   Widget getCurrentView() => isLoading
       ? const Center(child: CircularProgressIndicator.adaptive())
-      : views[_selectedIndex] as Widget;
+      : views[_selectedIndex];
 
   Text getCurrentTitle(BuildContext context) => isLoading
       ? const Text('')
       : Text(views[_selectedIndex].getRouteTitle(context));
-  Widget get currentWidget =>
-      isLoading ? Container() : views[_selectedIndex] as Widget;
+  Widget get currentWidget => isLoading ? Container() : views[_selectedIndex];
 
   Widget? getFloatingButton(BuildContext context) =>
       isLoading ? null : views[_selectedIndex].getFloatingButton(context);
