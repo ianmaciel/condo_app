@@ -7,14 +7,15 @@
         {
             "name": "Run flutter app",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": ["--web-port=3000"]
         },
         // These feature is not supported on flutter web yet
         //{
         //    "name": "[Guest] Run flutter web",
         //    "request": "launch",
         //    "type": "dart",
-        //    "args": ["-d", "chrome", "--web-port", "8000", "--route", "/guest?k=KEY_ID&t=TOKEN"]
+        //    "args": ["-d", "chrome", "--web-port=3000", "--route", "/guest?k=KEY_ID&t=TOKEN"]
         //},
         {
             "name": "[Guest] Run flutter",
