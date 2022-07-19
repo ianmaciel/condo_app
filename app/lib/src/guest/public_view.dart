@@ -106,8 +106,8 @@ class _LoginTip extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
-              const Icon(Icons.tips_and_updates),
-              const SizedBox(width: 16),
+              Icon(Icons.tips_and_updates),
+              SizedBox(width: 16),
               // TODO: translate
               Text(
                 'Dica: Clique aqui para fazer login e\nter acesso à chave sempre que precisar.',

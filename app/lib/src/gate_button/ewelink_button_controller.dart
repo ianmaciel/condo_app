@@ -22,7 +22,6 @@
 
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
 import 'package:dart_ewelink_api/dart_ewelink_api.dart';
 
@@ -66,7 +65,7 @@ class EwelinkButtonController with ChangeNotifier {
 
     // Toogle device by its id
     try {
-      // TODO change device id
+      // TODO change device id. Remove hardcoded id, read from firestore.
       await ewelinkApi!
           .setDevicePowerState(deviceId: '10000ffeb5', state: 'on');
     } on EwelinkInvalidAccessToken {

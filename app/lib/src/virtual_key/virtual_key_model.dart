@@ -46,8 +46,7 @@ class VirtualKey {
     required this.name,
     this.allowedUsers = const [],
     required this.owner,
-    // TODO: create a valid token
-    this.token = 'mytoken',
+    this.token = '',
     this.errors = 0,
     this.errorMessage = '',
     this.type = 'regular',

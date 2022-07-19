@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 
-//import 'package:flutter_vlc_player/flutter_vlc_player_platform_interface/lib/src/utils/options/vlc_player_options.dart';
 export 'package:flutter_vlc_player_platform_interface/src/utils/options/vlc_player_options.dart';
-//export 'package:flutter_vlc_player/src/vlc_player_controller.dart';
 
 /// Mock VlcPlayer to be able to compile and run this app on non-supported
 /// platforms like web and desktop.
@@ -73,6 +71,7 @@ class VlcPlayerController {
   /// It should be defined as "void Function(VlcRendererEventType, String, String)", where the VlcRendererEventType is an enum { attached, detached } and the next two String arguments are unique-id and name of renderer device, respectively.
   ///
   /// This member is deprecated, please, use the [addOnRendererEventListener] method instead.
+  // ignore: unused_field
   final RendererCallback? _onRendererHandler;
 
   /// Only set for [asset] videos. The package that the asset was loaded from.
@@ -81,6 +80,7 @@ class VlcPlayerController {
   /// Describes the type of data source this [VlcPlayerController]
   /// is constructed with.
   DataSourceType get dataSourceType => _dataSourceType;
+  // ignore: prefer_final_fields
   DataSourceType _dataSourceType;
 
   /// This is a callback that will be executed once the platform view has been initialized.
@@ -88,6 +88,7 @@ class VlcPlayerController {
   /// [VlcPlayerController.play] in this callback. (see the example).
   ///
   /// This member is deprecated, please, use the [addOnInitListener] method instead.
+  // ignore: unused_field
   final VoidCallback? _onInit;
 
   /// Constructs a [VlcPlayerController] playing a video from obtained from
@@ -111,28 +112,4 @@ class VlcPlayerController {
         _onRendererHandler = onRendererHandler;
 }
 
-//enum HwAcc {
-//  auto,
-//  disabled,
-//  decoding,
-//  full,
-//}
-
 typedef RendererCallback = void Function(VlcRendererEventType, String, String);
-
-//enum VlcRendererEventType {
-//  attached,
-//  detached,
-//  unknown,
-//}
-//
-//enum DataSourceType {
-//  /// The video was included in the app's asset files.
-//  asset,
-//
-//  /// The video was downloaded from the internet.
-//  network,
-//
-//  /// The video was loaded off of the local filesystem.
-//  file,
-//}
