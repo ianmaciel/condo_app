@@ -47,7 +47,7 @@ void main() async {
   );
 
   final UserController userController = UserController();
-  final GuestController guestController = GuestController();
+  final GuestController guestController = GuestController(userController);
 
   // Run the app and pass in the SettingsController. The app listens to the
   // SettingsController for changes, then passes it further down to the

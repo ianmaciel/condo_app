@@ -23,11 +23,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../virtual_key/virtual_key_model.dart';
-import 'guest_controller.dart';
+import 'virtual_key_model.dart';
+import '../guest/guest_controller.dart';
 
-class GuestContent extends StatelessWidget {
-  const GuestContent(
+class KeyDetailView extends StatelessWidget {
+  const KeyDetailView(
     this.guestKey, {
     Key? key,
   }) : super(key: key);

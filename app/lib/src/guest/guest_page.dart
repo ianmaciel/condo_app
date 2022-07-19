@@ -25,7 +25,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../bottom_navigation/bottom_navigation_controller.dart';
-import 'guest_content.dart';
+import '../virtual_key/key_detail_view.dart';
 import 'guest_error_view.dart';
 import 'guest_controller.dart';
 
@@ -46,6 +46,26 @@ class GuestPage extends PageModel {
   Widget? getFloatingButton(BuildContext context) => null;
 
   @override
+  Widget build(BuildContext context) => const _GuestContent();
+}
+
+class _GuestContent extends StatefulWidget {
+  const _GuestContent({Key? key}) : super(key: key);
+
+  @override
+  State<_GuestContent> createState() => _GuestContentState();
+}
+
+class _GuestContentState extends State<_GuestContent> {
+  @override
+  void initState() {
+    super.initState();
+    GuestController controller =
+        Provider.of<GuestController>(context, listen: false);
+    controller.loadUserKeys();
+  }
+
+  @override
   Widget build(BuildContext context) => Consumer<GuestController>(
         builder: (context, controller, child) {
           if (controller.hasError) {
@@ -55,7 +75,7 @@ class GuestPage extends PageModel {
             return const Center(child: CircularProgressIndicator());
           }
           return controller.hasVirtualKey
-              ? Center(child: GuestContent(controller.virtualKey!))
+              ? Center(child: KeyDetailView(controller.virtualKey!))
               : const Center(child: _GuestEmptyState());
         },
       );

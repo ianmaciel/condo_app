@@ -29,15 +29,18 @@ import 'package:flutter/material.dart';
 
 import '../qrcode_scanner/qrcode_result_model.dart';
 import '../qrcode_scanner/qrcode_scanner.dart';
+import '../user/user_controller.dart';
 import '../virtual_key/virtual_key_model.dart';
 
 class GuestController with ChangeNotifier {
   VirtualKey? virtualKey;
   bool _loading = true;
   String error = '';
+  UserController userController;
+  bool hasKeyInParameters = false;
   late StreamSubscription<User?> _firebaseAuthStreamSubscription;
 
-  GuestController() {
+  GuestController(this.userController) {
     _firebaseAuthStreamSubscription =
         FirebaseAuth.instance.authStateChanges().listen(_onFirebaseAuthData);
   }
@@ -45,6 +48,36 @@ class GuestController with ChangeNotifier {
   bool get isLoading => _loading;
   bool get hasVirtualKey => !_loading && error.isEmpty && virtualKey != null;
   bool get hasError => error.isNotEmpty;
+
+  Future<void> loadUserKeys() async {
+    if (!hasKeyInParameters) {
+      VirtualKeyQuery query = virtualKeysRef.whereAllowedUsers(
+          arrayContainsAny: [userController.uid]).whereEnable(isEqualTo: true);
+      VirtualKey? virtualKey = await _getFirsValidKey(query);
+      if (virtualKey != null) {
+        this.virtualKey = virtualKey;
+      }
+    }
+    _loading = false;
+    notifyListeners();
+  }
+
+  Future<VirtualKey?> _getFirsValidKey(VirtualKeyQuery query) async {
+    VirtualKeyQuerySnapshot snapshots = await query.get();
+    if (snapshots.docs.isEmpty) {
+      return null;
+    }
+
+    // TODO: here we might have a bug: if the key is about to expire, lets say
+    //       in 10 seconds, the user will receive a key but he won't be able to
+    //       use it. Ideally we should test look for the "best key", which means
+    //       the one that will be valid for a longer time.
+    return snapshots.docs
+        .where(
+            (VirtualKeyQueryDocumentSnapshot element) => element.data.isValid())
+        .first
+        .data;
+  }
 
   void loadKeyByUrlParameters(String route) {
     final Uri settingsUri = Uri.parse(route);
@@ -57,6 +90,7 @@ class GuestController with ChangeNotifier {
       notifyListeners();
       return;
     }
+    hasKeyInParameters = true;
     FirebaseFunctions.instance
         .httpsCallable('getVirtualKey')
         .call({

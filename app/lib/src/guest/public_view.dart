@@ -27,7 +27,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../about/about_page.dart';
 import '../user/protected_screen.dart';
 import 'guest_error_view.dart';
-import 'guest_content.dart';
+import '../virtual_key/key_detail_view.dart';
 import 'guest_controller.dart';
 
 class PublicView extends StatelessWidget {
@@ -66,7 +66,7 @@ class PublicView extends StatelessWidget {
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        GuestContent(controller.virtualKey!),
+                        KeyDetailView(controller.virtualKey!),
                         const _LoginTip(),
                       ],
                     )
