@@ -26,9 +26,12 @@ async function getVirtualKey(data, context) {
  */
 async function openGateWithKey(data, context) {
   const id = sanitizer.sanitize(data.id);
-  const virtualKey = (await db.doc(`virtualKeys/${id}`).get()).data();
+  const virtualKey = (await db.doc(`v/irtualKeys/${id}`).get()).data();
   const token = sanitizer.sanitize(data.token);
-  if (virtualKey && virtualKey.token == token) {
+  const qrcode = sanitizer.sanitize(data.qrcode);
+  // TODO - check if key is valid.
+  // TODO: remove this hardcoded value. Each door should have its own code.
+  if (virtualKey && virtualKey.token == token && qrcode == 'xDDI3l4iQzn') {
     return await ewelink.secureSetDevicePowerState("on");
   }
   throw new functions.https.HttpsError("permission-denied", "Invalid key");

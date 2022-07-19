@@ -20,33 +20,9 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../virtual_key/virtual_key_model.dart';
-import 'guest_controller.dart';
-
-class GuestContent extends StatelessWidget {
-  const GuestContent(
-    this.guestKey, {
-    Key? key,
-  }) : super(key: key);
-  final VirtualKey guestKey;
-
-  @override
-  Widget build(BuildContext context) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // TODO: translate
-          Text('${guestKey.owner} compartilhou com você uma chave!'),
-          const SizedBox(height: 16),
-          const Text('Leia com o QR Code do portão para abrir:'),
-          Consumer<GuestController>(builder: (context, controller, child) {
-            return ElevatedButton(
-              onPressed: () => controller.openQrCodeReader(context),
-              child: const Text('Abrir leitor de QR Code'),
-            );
-          })
-        ],
-      );
+class QRCodeResult {
+  String code;
+  String error;
+  bool get hasError => error.isNotEmpty;
+  QRCodeResult({this.code = '', this.error = ''});
 }

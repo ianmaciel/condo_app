@@ -27,6 +27,8 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../qrcode_scanner/qrcode_result_model.dart';
+import '../qrcode_scanner/qrcode_scanner.dart';
 import '../virtual_key/virtual_key_model.dart';
 
 class GuestController with ChangeNotifier {
@@ -61,17 +63,17 @@ class GuestController with ChangeNotifier {
           'token': token,
           'id': virtuaKeyId,
         })
-        .then(onKeyLoaded)
-        .onError(_onFirebaseError);
+        .then((HttpsCallableResult result) => _onKeyLoaded(result, virtuaKeyId))
+        .onError(_onError);
   }
 
-  void onKeyLoaded(HttpsCallableResult result) {
+  void _onKeyLoaded(HttpsCallableResult result, String virtuaKeyId) {
     virtualKey = VirtualKey.fromJson(result.data);
     _loading = false;
     notifyListeners();
   }
 
-  void _onFirebaseError(dynamic error, dynamic stackTrace) {
+  void _onError(dynamic error, dynamic stackTrace) {
     this.error = error.toString();
     notifyListeners();
     log(error.toString());
@@ -94,8 +96,61 @@ class GuestController with ChangeNotifier {
     //      'virtualKey': virtualKey.toJson(),
     //    })
     //    .then(onKeyLoaded)
-    //    .onError(_onFirebaseError);
+    //    .onError(_onError);
   }
+
+  Future<void> openQrCodeReader(BuildContext context) async {
+    Navigator.push<QRCodeResult?>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const QRCodeScannerView(),
+      ),
+    ).then(_onQRCodeRead);
+  }
+
+  void _onQRCodeRead(QRCodeResult? qrcode) async {
+    if (_qrCodeHasError(qrcode)) {
+      // TODO: translate text
+      _onError(qrcode?.error ?? 'Erro inexperado ao ler o QRCode', null);
+      return;
+    }
+    if (!_validateQRCodeValue(qrcode!)) {
+      // TODO: translate text
+      _onError(
+          'QRCode inválido, verifique se você está no portão correto.', null);
+      return;
+    }
+    _openGateWithKey(qrcode.code);
+  }
+
+  bool _validateQRCodeValue(QRCodeResult qrcode) {
+    // TODO: remove this hardcoded value. Each door should have its own code.
+    return qrcode.code == 'xDDI3l4iQzn';
+  }
+
+  void _openGateWithKey(String qrcode) {
+    _loading = true;
+    notifyListeners();
+
+    FirebaseFunctions.instance
+        .httpsCallable('openGateWithKey')
+        .call({
+          'id': virtualKey!.id!,
+          'token': virtualKey!.token,
+          'qrcode': qrcode,
+        })
+        .then(_onOpenGateResult)
+        .onError(_onError);
+  }
+
+  Future<void> _onOpenGateResult(HttpsCallableResult result) async {
+    await Future.delayed(const Duration(seconds: 5));
+    _loading = false;
+    notifyListeners();
+  }
+
+  bool _qrCodeHasError(QRCodeResult? qrcode) =>
+      qrcode == null || qrcode.hasError;
 
   @override
   void dispose() {

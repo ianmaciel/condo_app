@@ -40,6 +40,7 @@ class VirtualKey {
   DateTime? validFrom;
   DateTime? createdAt;
   final bool enable;
+  final String? id;
 
   VirtualKey({
     required this.name,
@@ -54,6 +55,7 @@ class VirtualKey {
     this.validFrom,
     this.createdAt,
     required this.enable,
+    this.id,
   }) {
     validFrom ??= DateTime.now();
   }

@@ -32,6 +32,7 @@ dependencies:
   forme_base_fields: ^2.2.1
   shared_preferences: ^2.0.15
   slidable_button: ^2.0.0+1
+  mobile_scanner: ^2.0.0
 
 dev_dependencies:
   flutter_test:

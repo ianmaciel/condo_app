@@ -21,32 +21,30 @@
 // SOFTWARE.
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../virtual_key/virtual_key_model.dart';
-import 'guest_controller.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
-class GuestContent extends StatelessWidget {
-  const GuestContent(
-    this.guestKey, {
-    Key? key,
-  }) : super(key: key);
-  final VirtualKey guestKey;
+import 'qrcode_result_model.dart';
+
+class QRCodeScannerView extends StatelessWidget {
+  const QRCodeScannerView({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // TODO: translate
-          Text('${guestKey.owner} compartilhou com você uma chave!'),
-          const SizedBox(height: 16),
-          const Text('Leia com o QR Code do portão para abrir:'),
-          Consumer<GuestController>(builder: (context, controller, child) {
-            return ElevatedButton(
-              onPressed: () => controller.openQrCodeReader(context),
-              child: const Text('Abrir leitor de QR Code'),
-            );
-          })
-        ],
-      );
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Mobile Scanner')),
+      body: MobileScanner(
+          allowDuplicates: false,
+          onDetect: (barcode, args) {
+            QRCodeResult qRCodeResult = QRCodeResult();
+            if (barcode.rawValue == null) {
+              // TODO: translate text
+              qRCodeResult.error = 'Erro ao ler o QRCode';
+            } else {
+              qRCodeResult.code = barcode.rawValue!;
+            }
+            Navigator.of(context).pop<QRCodeResult>(qRCodeResult);
+          }),
+    );
+  }
 }

@@ -128,6 +128,7 @@ abstract class VirtualKeyDocumentReference
     String errorMessage,
     String type,
     bool enable,
+    String? id,
   });
 
   Future<void> set(VirtualKey value);
@@ -180,6 +181,7 @@ class _$VirtualKeyDocumentReference
     Object? errorMessage = _sentinel,
     Object? type = _sentinel,
     Object? enable = _sentinel,
+    Object? id = _sentinel,
   }) async {
     final json = {
       if (name != _sentinel) "name": name as String,
@@ -191,6 +193,7 @@ class _$VirtualKeyDocumentReference
       if (errorMessage != _sentinel) "errorMessage": errorMessage as String,
       if (type != _sentinel) "type": type as String,
       if (enable != _sentinel) "enable": enable as bool,
+      if (id != _sentinel) "id": id as String?,
     };
 
     return reference.update(json);
@@ -327,6 +330,17 @@ abstract class VirtualKeyQuery
     List<bool>? whereIn,
     List<bool>? whereNotIn,
   });
+  VirtualKeyQuery whereId({
+    String? isEqualTo,
+    String? isNotEqualTo,
+    String? isLessThan,
+    String? isLessThanOrEqualTo,
+    String? isGreaterThan,
+    String? isGreaterThanOrEqualTo,
+    bool? isNull,
+    List<String?>? whereIn,
+    List<String?>? whereNotIn,
+  });
 
   VirtualKeyQuery orderByName({
     bool descending = false,
@@ -418,6 +432,18 @@ abstract class VirtualKeyQuery
     bool startAfter,
     bool endAt,
     bool endBefore,
+    VirtualKeyDocumentSnapshot? startAtDocument,
+    VirtualKeyDocumentSnapshot? endAtDocument,
+    VirtualKeyDocumentSnapshot? endBeforeDocument,
+    VirtualKeyDocumentSnapshot? startAfterDocument,
+  });
+
+  VirtualKeyQuery orderById({
+    bool descending = false,
+    String? startAt,
+    String? startAfter,
+    String? endAt,
+    String? endBefore,
     VirtualKeyDocumentSnapshot? startAtDocument,
     VirtualKeyDocumentSnapshot? endAtDocument,
     VirtualKeyDocumentSnapshot? endBeforeDocument,
@@ -694,6 +720,34 @@ class _$VirtualKeyQuery extends QueryReference<VirtualKeyQuerySnapshot>
     return _$VirtualKeyQuery(
       reference.where(
         'enable',
+        isEqualTo: isEqualTo,
+        isNotEqualTo: isNotEqualTo,
+        isLessThan: isLessThan,
+        isLessThanOrEqualTo: isLessThanOrEqualTo,
+        isGreaterThan: isGreaterThan,
+        isGreaterThanOrEqualTo: isGreaterThanOrEqualTo,
+        isNull: isNull,
+        whereIn: whereIn,
+        whereNotIn: whereNotIn,
+      ),
+      _collection,
+    );
+  }
+
+  VirtualKeyQuery whereId({
+    String? isEqualTo,
+    String? isNotEqualTo,
+    String? isLessThan,
+    String? isLessThanOrEqualTo,
+    String? isGreaterThan,
+    String? isGreaterThanOrEqualTo,
+    bool? isNull,
+    List<String?>? whereIn,
+    List<String?>? whereNotIn,
+  }) {
+    return _$VirtualKeyQuery(
+      reference.where(
+        'id',
         isEqualTo: isEqualTo,
         isNotEqualTo: isNotEqualTo,
         isLessThan: isLessThan,
@@ -1044,6 +1098,48 @@ class _$VirtualKeyQuery extends QueryReference<VirtualKeyQuerySnapshot>
     return _$VirtualKeyQuery(query, _collection);
   }
 
+  VirtualKeyQuery orderById({
+    bool descending = false,
+    Object? startAt = _sentinel,
+    Object? startAfter = _sentinel,
+    Object? endAt = _sentinel,
+    Object? endBefore = _sentinel,
+    VirtualKeyDocumentSnapshot? startAtDocument,
+    VirtualKeyDocumentSnapshot? endAtDocument,
+    VirtualKeyDocumentSnapshot? endBeforeDocument,
+    VirtualKeyDocumentSnapshot? startAfterDocument,
+  }) {
+    var query = reference.orderBy('id', descending: descending);
+
+    if (startAtDocument != null) {
+      query = query.startAtDocument(startAtDocument.snapshot);
+    }
+    if (startAfterDocument != null) {
+      query = query.startAfterDocument(startAfterDocument.snapshot);
+    }
+    if (endAtDocument != null) {
+      query = query.endAtDocument(endAtDocument.snapshot);
+    }
+    if (endBeforeDocument != null) {
+      query = query.endBeforeDocument(endBeforeDocument.snapshot);
+    }
+
+    if (startAt != _sentinel) {
+      query = query.startAt([startAt]);
+    }
+    if (startAfter != _sentinel) {
+      query = query.startAfter([startAfter]);
+    }
+    if (endAt != _sentinel) {
+      query = query.endAt([endAt]);
+    }
+    if (endBefore != _sentinel) {
+      query = query.endBefore([endBefore]);
+    }
+
+    return _$VirtualKeyQuery(query, _collection);
+  }
+
   @override
   bool operator ==(Object other) {
     return other is _$VirtualKeyQuery &&
@@ -1108,6 +1204,7 @@ VirtualKey _$VirtualKeyFromJson(Map<String, dynamic> json) => VirtualKey(
           ? null
           : DateTime.parse(json['createdAt'] as String),
       enable: json['enable'] as bool,
+      id: json['id'] as String?,
     );
 
 Map<String, dynamic> _$VirtualKeyToJson(VirtualKey instance) =>
@@ -1123,4 +1220,5 @@ Map<String, dynamic> _$VirtualKeyToJson(VirtualKey instance) =>
       'validFrom': instance.validFrom?.toIso8601String(),
       'createdAt': instance.createdAt?.toIso8601String(),
       'enable': instance.enable,
+      'id': instance.id,
     };
